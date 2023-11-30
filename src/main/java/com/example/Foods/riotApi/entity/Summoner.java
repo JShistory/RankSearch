@@ -2,6 +2,7 @@ package com.example.Foods.riotApi.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.util.List;
 import lombok.Data;
 
 @Entity
@@ -15,4 +16,6 @@ public class Summoner {
     private String id;
     private String puuid;
     private Long summonerLevel;
+
+
 }

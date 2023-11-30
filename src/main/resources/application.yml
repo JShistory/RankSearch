@@ -1,12 +1,28 @@
+server:
+  port: 8080 # 내장 톰캣 포트번호
+
 spring:
-  # H2 Setting Info (H2 Console에 접속하기 위한 설정정보 입력)
-  h2:
-    console:
-      enabled: true  # H2 Console을 사용할지 여부 (H2 Console은 H2 Database를 UI로 제공해주는 기능)
-      path: /h2-console  # H2 Console의 Path
-  # Database Setting Info (Database를 H2로 사용하기 위해 H2연결 정보 입력)
+  # H2 Database 설정
   datasource:
-    driver-class-name: org.h2.Driver  # Database를 H2로 사용하겠다.
-    url: jdbc:h2:~/test  # H2 접속 정보
-    username: sa  # H2 접속 시 입력할 username 정보 (원하는 것으로 입력)
-    password:  # H2 접속 시 입력할 password 정보 (원하는 것으로 입력)
+    driver-class-name: org.h2.Driver
+    url: 'jdbc:h2:mem:test'   # H2 DB 연결 주소 (In-Memory Mode)
+    #url: 'jdbc:h2:~/test'    # H2 DB 연결 주소 (Embedded Mode)
+    username: sa        # H2 DB 접속 ID (사용자 지정)
+    password:        # H2 DB 접속 PW (사용자 지정)
+
+  # H2 Console 설정
+  h2:
+    console: # H2 DB를 웹에서 관리할 수 있는 기능
+      enabled: true           # H2 Console 사용 여부
+      path: /h2-console       # H2 Console 접속 주소
+
+  # JPA 설정
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create        # DB 초기화 전략 (none, create, create-drop, update, validate)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true      # 쿼리 로그 포맷 (정렬)
+        show_sql: true        # 쿼리 로그 출력
