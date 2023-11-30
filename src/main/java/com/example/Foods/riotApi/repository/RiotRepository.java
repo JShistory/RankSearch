@@ -5,5 +5,5 @@ import com.example.Foods.riotApi.entity.SummonerDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RiotRepository extends JpaRepository<Summoner,String> {
-    SummonerDTO findByName(String summonerName);
+    Summoner findByName(String summonerName);
 }

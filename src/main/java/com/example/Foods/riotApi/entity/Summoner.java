@@ -2,8 +2,10 @@ package com.example.Foods.riotApi.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 @Entity
+@Data
 public class Summoner {
     @Id
     private String accountId;

@@ -1,5 +1,6 @@
 package com.example.Foods.riotApi.service;
 
+import com.example.Foods.riotApi.entity.Summoner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.entity.SummonerDTO;
 import com.example.Foods.riotApi.repository.RiotRepository;
@@ -22,21 +23,26 @@ public class RiotService {
 
     @Value("${riot.api.key}")
     private String riotApiKey;
+    public void saveUser(Summoner summoner){
+        riotRepository.save(summoner);
+    }
 
+    public Summoner findByName(String summonerName){
 
-    public SummonerDTO findByName(String summonerName){
-
-        SummonerDTO summoner = riotRepository.findByName(summonerName);
+        Summoner summoner = riotRepository.findByName(summonerName);
         if(summoner == null){
 
         }
         return riotRepository.findByName(summonerName);
     }
 
-    public SummonerDTO loadUser(String summonerName){
+    public Summoner loadUser(String summonerName){
 
-        SummonerDTO result;
-
+        Summoner result;
+        Summoner user = findByName(summonerName);
+        if(user != null){
+            return user;
+        }
         String serverUrl = "https://kr.api.riotgames.com";
 
         try {
@@ -50,13 +56,14 @@ public class RiotService {
             }
 
             HttpEntity entity = response.getEntity();
-            result = objectMapper.readValue(entity.getContent(), SummonerDTO.class);
+            result = objectMapper.readValue(entity.getContent(), Summoner.class);
 
         } catch (IOException e){
             e.printStackTrace();
             return null;
         }
 
+        saveUser(result);
         return result;
     }
 
