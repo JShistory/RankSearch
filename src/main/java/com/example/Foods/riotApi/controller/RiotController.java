@@ -1,5 +1,7 @@
 package com.example.Foods.riotApi.controller;
 
+import com.example.Foods.riotApi.entity.GameInfoDto;
+import com.example.Foods.riotApi.entity.MatchDTO;
 import com.example.Foods.riotApi.entity.ResponseVO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.entity.SummonerDTO;
@@ -43,8 +45,10 @@ public class RiotController {
         if(apiResult == null){
             return "redirect:/";
         }
-        List<String> gameData = riotService.loadGameInfo(apiResult.getPuuid(), 0,30);
-        System.out.println(gameData);
+        List<String> gameInfo = apiResult.getGameInfo();
+        MatchDTO gameData = riotService.gameInfo(gameInfo.get(0));
+
+        model.addAttribute("gameData",gameData);
         model.addAttribute("data",apiResult);
         return "riot/userInfo";
     }
