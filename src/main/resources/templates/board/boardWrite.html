@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>글쓰기</title>
+</head>
+<body>
+
+<h1>글쓰기</h1>
+
+<form action="/board/save" method="post">
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title" required>
+    <br>
+    <label for="content">내용:</label>
+    <textarea id="content" name="content" required></textarea>
+    <br>
+    <button type="submit">글쓰기 완료</button>
+</form>
+
+<!-- 목록으로 돌아가는 버튼 -->
+<a th:href="@{/board}" style="text-decoration: none;">
+    <button>목록으로 돌아가기</button>
+</a>
+
+</body>
+</html>
