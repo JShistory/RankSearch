@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>유저 정보</title>
+</head>
+<body>
+
+<h1>유저 정보</h1>
+
+<div>
+  <p>소환사명: <span th:text="${data.getName()}"></span></p>
+  <p>아이디: <span th:text="${data.getAccountId()}"></span></p>
+  <p>레벨: <span th:text="${data.getSummonerLevel()}"></span></p>
+  <p>레벨: <span th:text="${data.getProfileIconId()}"></span></p>
+  <p>레벨: <span th:text="${data.getPuuid()}"></span></p>
+  <p>레벨: <span th:text="${data.getRevisionDate()}"></span></p>
+  <!-- 기타 필요한 정보를 추가로 표시 -->
+</div>
+
+</body>
+</html>

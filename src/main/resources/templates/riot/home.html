@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>라이엇 전적검색</title>
+</head>
+<body>
+
+<h1>라이엇 전적검색</h1>
+
+<!-- 전적 검색 폼 -->
+<form id="searchForm">
+  <label for="summonerName">소환사명:</label>
+  <input type="text" id="summonerName" name="summonerName" required>
+  <button type="button" onclick="searchSummoner()">전적 검색</button>
+</form>
+
+<!-- 전적 검색 결과 표시 영역 -->
+<div id="searchResult"></div>
+
+<script>
+  // 전적 검색 함수
+  function searchSummoner() {
+    var summonerName = document.getElementById("summonerName").value;
+    // 수정된 부분: '/riot/{summonerName}'으로 이동
+    window.location.href = "/riot/" + summonerName;
+  }
+</script>
+
+</body>
+</html>
