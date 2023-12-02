@@ -11,13 +11,9 @@
 
 <div>
   <p>소환사명: <span th:text="${data.getName()}"></span></p>
-  <p>아이디: <span th:text="${data.getAccountId()}"></span></p>
   <p>레벨: <span th:text="${data.getSummonerLevel()}"></span></p>
-  <p>profileIconId: <span th:text="${data.getProfileIconId()}"></span></p>
-  <p>puuid: <span th:text="${data.getPuuid()}"></span></p>
-  <p>?: <span th:text="${data.getRevisionDate()}"></span></p>
-  <p>?: <span th:text="${gameData.getInfo().getGameMode()}"></span></p>
-  <p>?: <span th:text="${gameData.getMetaData().getDataVersion()}"></span></p>
+  <p><span th:text="${diffTime}"></span> 전에 롤을 플레이 했습니다.</p>
+
   <!-- 기타 필요한 정보를 추가로 표시 -->
 </div>
 

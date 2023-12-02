@@ -2,11 +2,13 @@ package com.example.Foods.riotApi.controller;
 
 import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.MatchDTO;
-import com.example.Foods.riotApi.entity.ResponseVO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.entity.SummonerDTO;
 import com.example.Foods.riotApi.service.RiotService;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,17 +41,21 @@ public class RiotController {
     }
 
     @GetMapping("/summonerByName")
-    public String SummonerInfo(String summonerName, Model model){
+    public String SummonerInfo(String summonerName, Model model) throws ParseException {
         summonerName = summonerName.replaceAll(" ", "%20");
         Summoner apiResult = riotService.loadUser(summonerName);
         if(apiResult == null){
             return "redirect:/";
         }
         List<String> gameInfo = apiResult.getGameInfo();
-        MatchDTO gameData = riotService.gameInfo(gameInfo.get(0));
+        MatchDTO gameData = riotService.loadGameInfo(gameInfo.get(0));
+        Date time = riotService.convertUnixTimeToUTC(gameData.getInfo().getGameEndTimestamp());
+        String diffTime = riotService.diffCurrentTimeAndParam(time);
 
+        model.addAttribute("diffTime",diffTime);
         model.addAttribute("gameData",gameData);
         model.addAttribute("data",apiResult);
+        model.addAttribute("time",time);
         return "riot/userInfo";
     }
 

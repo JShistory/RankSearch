@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseVO {
+public class Test {
 
-    private int responseCode;
-    private String responseMsg;
-    private Object data;
+    private int age;
+    private String name;
+//    private Object data;
 
 }

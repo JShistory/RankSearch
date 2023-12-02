@@ -1,6 +1,7 @@
 package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -17,6 +18,7 @@ public class GameInfoDto {
     private String gameType;
     private String gameVersion;
     private int mapId;
+    private List<ParticipantDto> participants;
 
 //    private int assists;
 //    private int baronKills;

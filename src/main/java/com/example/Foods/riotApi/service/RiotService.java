@@ -6,6 +6,16 @@ import com.example.Foods.riotApi.entity.Summoner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.repository.RiotRepository;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -42,11 +52,6 @@ public class RiotService {
     }
 
     public Summoner findByName(String summonerName) {
-
-        Summoner summoner = riotRepository.findByName(summonerName);
-        if (summoner == null) {
-
-        }
         return riotRepository.findByName(summonerName);
     }
 
@@ -76,14 +81,14 @@ public class RiotService {
             return null;
         }
         //유저 db에 저장
-        List<String> gameInfo = loadGameInfo(result.getPuuid(), 0, 30);
+        List<String> gameInfo = loadGameId(result.getPuuid(), 0, 30);
         result.setGameInfo(gameInfo);
         saveUser(result);
 
         return result;
     }
 
-    public List<String> loadGameInfo(String puuid, int start, int count) {
+    public List<String> loadGameId(String puuid, int start, int count) {
         List<String> result;
         try {
             HttpClient client = HttpClientBuilder.create().build();
@@ -107,7 +112,7 @@ public class RiotService {
     }
 
     //api 호출로 게임 데이터 가져옴
-    public MatchDTO gameInfo(String matchId) {
+    public MatchDTO loadGameInfo(String matchId) {
         MatchDTO result;
         try {
             HttpClient client = HttpClientBuilder.create().build();
@@ -128,6 +133,43 @@ public class RiotService {
 
         }
         return result;
+    }
+
+    public Date convertUnixTimeToUTC(Long unixTimeStamp) {
+        Date date = new Date();
+        date.setTime(unixTimeStamp);
+        return date;
+    }
+
+    public String diffCurrentTimeAndParam(Date date) {
+        Date now = new Date();
+        System.out.println(date.getTime());
+        System.out.println(now.getTime());
+
+        long timeDiff = now.getTime() - date.getTime();
+        long seconds = timeDiff / 1000;
+
+        long minutes = 0;
+        long hours = 0;
+        long day = 0;
+
+        if(seconds >= 86400){
+            day = seconds / 86400;
+            seconds -= (86400 * day);
+        }
+
+        if(seconds >= 3600){
+            hours = seconds / 3600;
+            seconds -= (3600 * hours);
+        }
+
+        if(seconds >= 60){
+            minutes = seconds / 60;
+            seconds -= (60 * minutes);
+        }
+
+        String str = day + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+        return str;
     }
 
 }
