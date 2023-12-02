@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +43,10 @@ public class RiotController {
     }
 
     @GetMapping("/summonerByName")
-    public String SummonerInfo(String summonerName, Model model) throws ParseException {
+    public String SummonerInfo(String summonerName,Model model){
         summonerName = summonerName.replaceAll(" ", "%20");
+
+
         Summoner apiResult = riotService.loadUser(summonerName);
         if(apiResult == null){
             return "redirect:/";
@@ -51,7 +55,9 @@ public class RiotController {
         MatchDTO gameData = riotService.loadGameInfo(gameInfo.get(0));
         Date time = riotService.convertUnixTimeToUTC(gameData.getInfo().getGameEndTimestamp());
         String diffTime = riotService.diffCurrentTimeAndParam(time);
+        String simpleDateFormat = riotService.diff(time);
 
+        model.addAttribute("dateFormat",simpleDateFormat);
         model.addAttribute("diffTime",diffTime);
         model.addAttribute("gameData",gameData);
         model.addAttribute("data",apiResult);

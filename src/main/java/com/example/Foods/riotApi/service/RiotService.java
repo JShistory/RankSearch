@@ -6,6 +6,7 @@ import com.example.Foods.riotApi.entity.Summoner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.repository.RiotRepository;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -143,11 +146,20 @@ public class RiotService {
 
     public String diffCurrentTimeAndParam(Date date) {
         Date now = new Date();
-        System.out.println(date.getTime());
-        System.out.println(now.getTime());
 
         long timeDiff = now.getTime() - date.getTime();
-        long seconds = timeDiff / 1000;
+        List<Long> timeData = calculatorTime(timeDiff);
+        long day = timeData.get(0);
+        long hours = timeData.get(1);
+        long minutes = timeData.get(2);
+        long seconds = timeData.get(3);
+
+        String str = day + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+        return str;
+    }
+    public List<Long> calculatorTime(long time){
+
+        long seconds = time / 1000;
 
         long minutes = 0;
         long hours = 0;
@@ -167,9 +179,23 @@ public class RiotService {
             minutes = seconds / 60;
             seconds -= (60 * minutes);
         }
+        List<Long> timeData = new ArrayList<>();
+        timeData.add(day);
+        timeData.add(hours);
+        timeData.add(minutes);
+        timeData.add(seconds);
 
-        String str = day + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
-        return str;
+        return timeData;
+    }
+
+    public String diff(Date date){
+        long timeDiff = date.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시MM분 E요일");
+        String format = simpleDateFormat.format(timeDiff);
+        System.out.println(format);
+        return format;
+
+
     }
 
 }
