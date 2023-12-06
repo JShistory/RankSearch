@@ -19,8 +19,9 @@ public class BoardService {
     }
 
     @Transactional
-    public void write(Board board){
+    public Long write(Board board){
         boardRepository.save(board);
+        return board.getId();
     }
 
     public List<Board> findAll(){
@@ -29,6 +30,18 @@ public class BoardService {
 
     public Board findById(Long id){
         return boardRepository.findById(id).get();
+    }
+
+    @Transactional
+    public void update(Long id, String content, String title){
+        Board board = boardRepository.findById(id).get();
+        if(title == null){
+            title = board.getTitle();
+        }
+        if(content == null)
+            content = board.getContent();
+        board.setTitle(title);
+        board.setContent(content);
     }
 
 }

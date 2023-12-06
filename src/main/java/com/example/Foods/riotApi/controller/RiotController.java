@@ -53,15 +53,15 @@ public class RiotController {
         }
         List<String> gameInfo = apiResult.getGameInfo();
         MatchDTO gameData = riotService.loadGameInfo(gameInfo.get(0));
-        Date time = riotService.convertUnixTimeToUTC(gameData.getInfo().getGameEndTimestamp());
-        String diffTime = riotService.diffCurrentTimeAndParam(time);
-        String simpleDateFormat = riotService.diff(time);
+        Date gameEndTime = riotService.convertUnixTimeToUTC(gameData.getInfo().getGameEndTimestamp());
+        String diffEndTimeNowTimeFormat_1 = riotService.diffCurrentTimeAndParam(gameEndTime);
+        String diffEndTimeNowTimeFormat_2 = riotService.diff(gameEndTime);
 
-        model.addAttribute("dateFormat",simpleDateFormat);
-        model.addAttribute("diffTime",diffTime);
+        model.addAttribute("dateFormat",diffEndTimeNowTimeFormat_2);
+        model.addAttribute("diffTime",diffEndTimeNowTimeFormat_1);
         model.addAttribute("gameData",gameData);
         model.addAttribute("data",apiResult);
-        model.addAttribute("time",time);
+        model.addAttribute("time",gameEndTime);
         return "riot/userInfo";
     }
 
