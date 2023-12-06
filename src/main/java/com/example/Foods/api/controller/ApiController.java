@@ -2,22 +2,17 @@ package com.example.Foods.api.controller;
 
 import com.example.Foods.board.entity.Board;
 import com.example.Foods.board.service.BoardService;
-import com.example.Foods.member.service.MemberService;
-import java.nio.charset.Charset;
 import java.util.List;
-import javax.xml.transform.Result;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,6 +37,13 @@ public class ApiController {
 
     @PutMapping("/api/v1/boards/{id}")
     public UpdateBoardResponse UpdateBoardV1(@PathVariable("id") Long id, UpdateBoardRequest request){
+        boardService.update(id,request.getContent(), request.getTitle());
+        Board board = boardService.findById(id);
+        return new UpdateBoardResponse(board.getId(),board.getTitle(), board.getContent());
+    }
+
+    @PatchMapping("/api/v1/boards/{id}")
+    public UpdateBoardResponse UpdateBoardV2(@PathVariable("id") Long id, UpdateBoardRequest request){
         boardService.update(id,request.getContent(), request.getTitle());
         Board board = boardService.findById(id);
         return new UpdateBoardResponse(board.getId(),board.getTitle(), board.getContent());
