@@ -18,6 +18,7 @@ public class GameInfoDto {
     private String gameType;
     private String gameVersion;
     private int mapId;
+
     private List<ParticipantDto> participants;
 
 //    private int assists;

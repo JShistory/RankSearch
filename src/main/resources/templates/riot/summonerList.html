@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소환사 정보</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .summoner {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 소환사 정보를 담은 객체 (예제로 리스트 사용) -->
+
+<div th:each="summoner : ${summonerList}">
+    <a class="summoner" th:value="${summoner}" th:href="@{|/riot/find/${summoner.getDataId()}|}">
+        <p>Name: <span th:text="${summoner.getName()}"></span></p>
+        <p>Tag: <span th:text="${summoner.getTag()}"></span></p>
+    </a>
+</div>
+
+
+
+</body>
+</html>

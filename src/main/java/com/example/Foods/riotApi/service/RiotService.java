@@ -1,11 +1,13 @@
 package com.example.Foods.riotApi.service;
 
+import com.example.Foods.riotApi.entity.AccountDTO;
 import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.MatchDTO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.repository.RiotRepository;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+import jakarta.transaction.Transactional;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -50,22 +52,118 @@ public class RiotService {
     @Value("${riot.api.matchDataUrl}")
     private String matchDataUrl;
 
+    @Value("https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/")
+    private String summonerAndTagUrl;
+
+    @Value("https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/")
+    private String summonerPuuidUrl;
+
+    @Transactional
     public void saveUser(Summoner summoner) {
         riotRepository.save(summoner);
     }
 
-    public Summoner findByName(String summonerName) {
-        return riotRepository.findByName(summonerName);
+//    public Summoner findByName(String summonerName) {
+//        return riotRepository.findByName(summonerName);
+//    }
+
+    public Summoner findByNameAndTag(String summonerName, String tag){
+        return riotRepository.findByNameAndTag(summonerName, tag);
     }
 
-    public Summoner loadUser(String summonerName) {
+    public String[] splitNameAndTag(String data){
+        String summonerName;
+        String tag;
 
-        Summoner result;
+        if(data.contains("-")){
+            String[] split = data.split("-");
+            summonerName = split[0];
+            tag = split[1];
+        }
+        else{
+            summonerName = data;
+            tag = "KR1";
+        }
+
+        return new String[]{summonerName, tag};
+
+    }
+    public Summoner loadUserWithTag(String summonerName,String tag) {
         //유저 찾아보고 있으면 반환
-        Summoner user = findByName(summonerName);
+        Summoner user = findByNameAndTag(summonerName,tag);
+        AccountDTO accountDTO;
         if (user != null) {
             return user;
         }
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(summonerAndTagUrl + summonerName +"/"+ tag + "?api_key=" + riotApiKey);
+
+            HttpResponse response = client.execute(request);
+
+            if (response.getStatusLine().getStatusCode() != 200) {
+                return null;
+            }
+
+            HttpEntity entity = response.getEntity();
+            accountDTO = objectMapper.readValue(entity.getContent(), AccountDTO.class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        user = loadUserWithPuuid(accountDTO.getPuuid(),accountDTO.getTagLine(),accountDTO.getGameName());
+        return user;
+    }
+
+    public Summoner loadUserWithPuuid(String puuid,String tag,String name) {
+        //유저 찾아보고 있으면 반환
+//        Summoner user = findByNameAndTag(summonerName,tag);
+//        if (user != null) {
+//            return user;
+//        }
+        Summoner user;
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(summonerPuuidUrl + puuid + "?api_key=" + riotApiKey);
+
+            HttpResponse response = client.execute(request);
+
+            if (response.getStatusLine().getStatusCode() != 200) {
+                return null;
+            }
+
+            HttpEntity entity = response.getEntity();
+            user = objectMapper.readValue(entity.getContent(), Summoner.class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //유저 db에 저장
+        List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
+        user.setGameInfo(gameInfo);
+        user.setTag(tag);
+        user.setPrevId(user.getName());
+        user.setName(name);
+
+        saveUser(user);
+
+        return user;
+    }
+
+    public List<Summoner> summonerList(String name){
+        return riotRepository.findByName(name);
+    }
+
+    public Summoner loadUser(String summonerName,String tag) {
+        //유저 찾아보고 있으면 반환
+//        Summoner user = findByNameAndTag(summonerName,tag);
+//        if (user != null) {
+//            return user;
+//        }
+        Summoner user;
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(summonerUrl + summonerName + "?api_key=" + riotApiKey);
@@ -77,18 +175,19 @@ public class RiotService {
             }
 
             HttpEntity entity = response.getEntity();
-            result = objectMapper.readValue(entity.getContent(), Summoner.class);
+            user = objectMapper.readValue(entity.getContent(), Summoner.class);
 
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         //유저 db에 저장
-        List<String> gameInfo = loadGameId(result.getPuuid(), 0, 30);
-        result.setGameInfo(gameInfo);
-        saveUser(result);
+        List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
+        user.setGameInfo(gameInfo);
+        user.setTag(tag);
+        saveUser(user);
 
-        return result;
+        return user;
     }
 
     public List<String> loadGameId(String puuid, int start, int count) {
@@ -198,4 +297,7 @@ public class RiotService {
 
     }
 
+    public Summoner findById(Long id) {
+        return riotRepository.findById(id).get();
+    }
 }
