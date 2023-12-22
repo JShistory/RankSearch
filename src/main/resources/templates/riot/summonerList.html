@@ -19,13 +19,17 @@
     </style>
 </head>
 <body>
-
+<form action="/riot/summonerByName" method="get">
+    <label for="summonerName">소환사명:</label>
+    <input type="text" id="summonerName" name="summonerName" required>
+    <button type="submit">전적 검색</button>
+</form>
 <!-- 소환사 정보를 담은 객체 (예제로 리스트 사용) -->
 
 <div th:each="summoner : ${summonerList}">
-    <a class="summoner" th:value="${summoner}" th:href="@{|/riot/find/${summoner.getDataId()}|}">
-        <p>Name: <span th:text="${summoner.getName()}"></span></p>
-        <p>Tag: <span th:text="${summoner.getTag()}"></span></p>
+    <a class="summoner" th:value="${summoner}" th:href="@{/riot/summonerByName(summonerName=${summoner.getName()+'-'+summoner.getTag()} )}">
+        <p>소환사명: <span th:text="${summoner.getName() +'#'+ summoner.getTag()}"></span></p>
+        <p>소환사레벨: <span th:text="${summoner.getSummonerLevel()}"></span></p>
     </a>
 </div>
 

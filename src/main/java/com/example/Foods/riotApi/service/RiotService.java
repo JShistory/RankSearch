@@ -2,15 +2,26 @@ package com.example.Foods.riotApi.service;
 
 import com.example.Foods.riotApi.entity.AccountDTO;
 import com.example.Foods.riotApi.entity.GameInfoDto;
+import com.example.Foods.riotApi.entity.LeagueEntry;
+import com.example.Foods.riotApi.entity.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.MatchDTO;
 import com.example.Foods.riotApi.entity.Summoner;
+import com.example.Foods.riotApi.repository.LeagueEntryRepository;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.util.JsonParserDelegate;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.repository.RiotRepository;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
 import jakarta.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+
+
+import java.net.URL;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -21,6 +32,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +41,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -36,7 +53,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class RiotService {
 
-    private final RiotRepository riotRepository;
+    private final SummonerService summonerService;
+    private final LeagueEntryService leagueEntryService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${riot.api.key}")
@@ -58,46 +76,197 @@ public class RiotService {
     @Value("https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/")
     private String summonerPuuidUrl;
 
-    @Transactional
-    public void saveUser(Summoner summoner) {
-        riotRepository.save(summoner);
-    }
+    @Value("https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/")
+    private String rankUrl;
 
-//    public Summoner findByName(String summonerName) {
-//        return riotRepository.findByName(summonerName);
-//    }
-
-    public Summoner findByNameAndTag(String summonerName, String tag){
-        return riotRepository.findByNameAndTag(summonerName, tag);
-    }
-
-    public String[] splitNameAndTag(String data){
+    public String[] splitNameAndTag(String data) {
         String summonerName;
         String tag;
 
-        if(data.contains("-")){
+        if (data.contains("-")) {
             String[] split = data.split("-");
             summonerName = split[0];
             tag = split[1];
-        }
-        else{
+        } else {
             summonerName = data;
             tag = "KR1";
         }
-
         return new String[]{summonerName, tag};
-
     }
-    public Summoner loadUserWithTag(String summonerName,String tag) {
+
+    public LeagueEntryDTO loadSoloRank(String encryptedSummonerId, Long id) {
+
+        BufferedReader br;
+        LeagueEntryDTO leagueEntry;
+
+        Summoner summoner = summonerService.findById(id);
+        List<LeagueEntry> findLeagueEntry = leagueEntryService.findBySummoner(summoner);
+
+        if (!findLeagueEntry.isEmpty()) {
+            for (LeagueEntry dataLeague : findLeagueEntry) {
+                if (dataLeague.getQueueType().contains("SOLO")) {
+                    LeagueEntryDTO leagueEntryDTO = LeagueEntryDTO.builder()
+                            .leagueId(dataLeague.getLeagueId())
+                            .leaguePoints(dataLeague.getLeaguePoints())
+                            .wins(dataLeague.getWins())
+                            .losses(dataLeague.getLosses())
+                            .queueType(dataLeague.getQueueType())
+                            .tier(dataLeague.getTier())
+                            .rank(dataLeague.getRank())
+                            .build();
+
+                    return leagueEntryDTO;
+                }
+            }
+
+        }
+
+        try {
+            String urlStr = rankUrl + encryptedSummonerId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+            if (result.contains("SOLO")) {
+                JSONParser jsonParser = new JSONParser();
+                JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
+                JSONObject k;
+//                System.out.println("jsonArray"+jsonArray.size());
+                //1은 자유랭크 0은 솔로랭때
+                if (jsonArray.size() == 1 || jsonArray.size() == 2) {
+                    k = (JSONObject) jsonArray.get(0);
+                } else {
+                    return null;
+                }
+
+                int wins = Integer.valueOf(k.get("wins").toString());
+                int losses = Integer.valueOf(k.get("losses").toString());
+                String rank = (String) k.get("rank");
+                String tier = (String) k.get("tier");
+                String queueType = (String) k.get("queueType");
+                int leaguePoints = Integer.valueOf(k.get("leaguePoints").toString());
+                String leagueId = (String) k.get("leagueId");
+                leagueEntry = LeagueEntryDTO.builder()
+                        .wins(wins)
+                        .losses(losses)
+                        .rank(rank)
+                        .tier(tier)
+                        .queueType(queueType)
+                        .leagueId(leagueId)
+                        .leaguePoints(leaguePoints)
+                        .build();
+
+            } else {
+                return null;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return leagueEntry;
+    }
+
+    public LeagueEntryDTO loadFlexRank(String encryptedSummonerId, Long id) {
+
+        BufferedReader br;
+        LeagueEntryDTO leagueEntry;
+        Summoner summoner = summonerService.findById(id);
+        List<LeagueEntry> findLeagueEntry = leagueEntryService.findBySummoner(summoner);
+
+        if (!findLeagueEntry.isEmpty()) {
+            for (LeagueEntry dataLeague : findLeagueEntry) {
+                if (dataLeague.getQueueType().contains("FLEX")) {
+                    LeagueEntryDTO leagueEntryDTO = LeagueEntryDTO.builder()
+                            .leagueId(dataLeague.getLeagueId())
+                            .leaguePoints(dataLeague.getLeaguePoints())
+                            .wins(dataLeague.getWins())
+                            .losses(dataLeague.getLosses())
+                            .queueType(dataLeague.getQueueType())
+                            .tier(dataLeague.getTier())
+                            .rank(dataLeague.getRank())
+                            .build();
+
+                    return leagueEntryDTO;
+                }
+            }
+
+        }
+
+        try {
+            String urlStr = rankUrl + encryptedSummonerId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+
+            if (result.contains("FLEX")) {
+//                System.out.println("result" + result);
+                JSONParser jsonParser = new JSONParser();
+                JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
+                JSONObject k;
+//                System.out.println("jsonArray"+jsonArray.size());
+                //1은 자유랭크 0은 솔로랭때
+                if (jsonArray.size() == 1) {
+                    k = (JSONObject) jsonArray.get(0);
+                } else if (jsonArray.size() == 2) {
+                    k = (JSONObject) jsonArray.get(1);
+                } else {
+                    return null;
+                }
+                int wins = Integer.valueOf(k.get("wins").toString());
+                int losses = Integer.valueOf(k.get("losses").toString());
+                String rank = (String) k.get("rank");
+                String tier = (String) k.get("tier");
+                String queueType = (String) k.get("queueType");
+                int leaguePoints = Integer.valueOf(k.get("leaguePoints").toString());
+                String leagueId = (String) k.get("leagueId");
+                leagueEntry = LeagueEntryDTO.builder()
+                        .wins(wins)
+                        .losses(losses)
+                        .rank(rank)
+                        .tier(tier)
+                        .queueType(queueType)
+                        .leagueId(leagueId)
+                        .leaguePoints(leaguePoints)
+                        .build();
+            } else {
+                return null;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return leagueEntry;
+    }
+
+    public Summoner loadUserWithTag(String summonerName, String tag) {
         //유저 찾아보고 있으면 반환
-        Summoner user = findByNameAndTag(summonerName,tag);
+        Summoner user = summonerService.findByNameAndTag(summonerName, tag);
         AccountDTO accountDTO;
         if (user != null) {
             return user;
         }
         try {
             HttpClient client = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet(summonerAndTagUrl + summonerName +"/"+ tag + "?api_key=" + riotApiKey);
+            HttpGet request = new HttpGet(summonerAndTagUrl + summonerName + "/" + tag + "?api_key=" + riotApiKey);
 
             HttpResponse response = client.execute(request);
 
@@ -112,12 +281,12 @@ public class RiotService {
             e.printStackTrace();
             return null;
         }
-
-        user = loadUserWithPuuid(accountDTO.getPuuid(),accountDTO.getTagLine(),accountDTO.getGameName());
+        //puuid를 통해 추가적인 정보를 더 획득
+        user = loadUserWithPuuid(accountDTO.getPuuid(), accountDTO.getTagLine(), accountDTO.getGameName());
         return user;
     }
 
-    public Summoner loadUserWithPuuid(String puuid,String tag,String name) {
+    public Summoner loadUserWithPuuid(String puuid, String tag, String name) {
         //유저 찾아보고 있으면 반환
 //        Summoner user = findByNameAndTag(summonerName,tag);
 //        if (user != null) {
@@ -143,21 +312,17 @@ public class RiotService {
         }
         //유저 db에 저장
         List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
+
         user.setGameInfo(gameInfo);
         user.setTag(tag);
         user.setPrevId(user.getName());
         user.setName(name);
-
-        saveUser(user);
+//        summonerService.saveUser(user);
 
         return user;
     }
 
-    public List<Summoner> summonerList(String name){
-        return riotRepository.findByName(name);
-    }
-
-    public Summoner loadUser(String summonerName,String tag) {
+    public Summoner loadUser(String summonerName, String tag) {
         //유저 찾아보고 있으면 반환
 //        Summoner user = findByNameAndTag(summonerName,tag);
 //        if (user != null) {
@@ -185,8 +350,6 @@ public class RiotService {
         List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
         user.setGameInfo(gameInfo);
         user.setTag(tag);
-        saveUser(user);
-
         return user;
     }
 
@@ -256,7 +419,8 @@ public class RiotService {
         String str = day + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
         return str;
     }
-    public List<Long> calculatorTime(long time){
+
+    public List<Long> calculatorTime(long time) {
 
         long seconds = time / 1000;
 
@@ -264,17 +428,17 @@ public class RiotService {
         long hours = 0;
         long day = 0;
 
-        if(seconds >= 86400){
+        if (seconds >= 86400) {
             day = seconds / 86400;
             seconds -= (86400 * day);
         }
 
-        if(seconds >= 3600){
+        if (seconds >= 3600) {
             hours = seconds / 3600;
             seconds -= (3600 * hours);
         }
 
-        if(seconds >= 60){
+        if (seconds >= 60) {
             minutes = seconds / 60;
             seconds -= (60 * minutes);
         }
@@ -287,7 +451,7 @@ public class RiotService {
         return timeData;
     }
 
-    public String diff(Date date){
+    public String diff(Date date) {
         long timeDiff = date.getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시MM분 E요일");
         String format = simpleDateFormat.format(timeDiff);
@@ -297,7 +461,4 @@ public class RiotService {
 
     }
 
-    public Summoner findById(Long id) {
-        return riotRepository.findById(id).get();
-    }
 }

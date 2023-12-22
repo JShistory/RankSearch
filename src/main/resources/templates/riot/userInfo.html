@@ -1,22 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>유저 정보</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유저 정보</title>
 </head>
 <body>
 
 <h1>유저 정보</h1>
 
 <div>
-  <p>소환사명: <span th:text="${data.getName()+'#'+data.getTag()}"></span></p>
-  <p>Prev: <span th:text="${data.getPrevId()}"></span></p>
-  <p>레벨: <span th:text="${data.getSummonerLevel()}"></span></p>
-  <p><span th:text="${diffTime}"></span> 전에 롤을 플레이 했습니다.</p>
-  <p><span th:text="${dateFormat}"></span>에 마지막으로 롤을 플레이 했습니다.</p>
+    <p>소환사명: <span th:text="${data.getName()+'#'+data.getTag()}"></span></p>
+    <p>전 닉네임: <span th:text="${data.getPrevId()}"></span></p>
+    <p>레벨: <span th:text="${data.getSummonerLevel()}"></span></p>
+    <p>솔로랭크:
+        <span th:if="${soloLeagueData==null}" th:text="UnRanked" ></span>
+        <span th:unless ="${soloLeagueData==null}" th:text="${soloLeagueData.getTier() +' '+ soloLeagueData.getRank() +' '+ soloLeagueData.getLeaguePoints() +'점'}"></span>
+    </p>
+    <p>전적:
+        <span th:if="${soloLeagueData==null}" th:text="UnDefine" ></span>
+        <span th:unless ="${soloLeagueData==null}" th:text="${soloLeagueData.getWins() +'승'+soloLeagueData.getLosses()+'패'}"></span>
+    </p>
+    <p>승률:
+        <span th:if="${soloLeagueData==null}" th:text="UnDefine" ></span>
+        <span th:unless ="${soloLeagueData==null}" th:text="${#numbers.formatInteger(soloLeagueData.getWins() * 100.0/(soloLeagueData.getWins() + soloLeagueData.getLosses()),2)} + '%'"></span>
+    </p>
 
-  <!-- 기타 필요한 정보를 추가로 표시 -->
+    <p>자유랭크:
+        <span th:if="${flexLeagueData==null}" th:text="UnRanked" ></span>
+        <span th:unless ="${flexLeagueData==null}" th:text="${flexLeagueData.getTier() +' '+ flexLeagueData.getRank() +' '+flexLeagueData.getLeaguePoints() +'점'}"></span>
+    </p>
+
+    <p>전적:
+        <span th:if="${flexLeagueData==null}" th:text='UnDefine' ></span>
+        <span th:unless ="${flexLeagueData==null}" th:text="${flexLeagueData.getWins() +'승'+flexLeagueData.getLosses()+'패'}"></span>
+    </p>
+    <p>승률:
+        <span th:if="${flexLeagueData==null}" th:text="UnDefine" ></span>
+        <span th:unless ="${flexLeagueData==null}" th:text="${#numbers.formatInteger(flexLeagueData.getWins() * 100.0/(flexLeagueData.getWins() + flexLeagueData.getLosses()),2)} + '%'"></span>
+    </p>
+
+
+    <p><span th:text="${diffTime}"></span> 전에 롤을 플레이 했습니다.</p>
+    <p><span th:text="${dateFormat}"></span>에 마지막으로 롤을 플레이 했습니다.</p>
+    <!-- 기타 필요한 정보를 추가로 표시 -->
 </div>
 
 </body>

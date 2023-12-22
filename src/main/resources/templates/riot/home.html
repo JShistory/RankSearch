@@ -4,6 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>라이엇 전적검색</title>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* 100% viewport height */
+      margin: 0;
+    }
+
+    h1, form, label {
+      text-align: center;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
 
@@ -13,11 +32,30 @@
 <form action="/riot/summonerByName" method="get">
   <label for="summonerName">소환사명:</label>
   <input type="text" id="summonerName" name="summonerName" required>
-  <button type="submit">전적 검색</button>
+  <button onclick="replaceHash()">Replace # with -</button>
 </form>
-<label> 태그를 입력하려면 -를 사용해주세요 ex)Hide on Bush-KR1</label>
+<label> 태그를 입력하려면 #를 사용해주세요 ex)Hide on Bush#KR1</label>
 <br>
 <label> 태그 미 입력시 기본 값은 KR1입니다</label>
+
+<script>
+  function replaceHash() {
+    var inputElement = document.getElementById("summonerName");
+    var inputValue = inputElement.value;
+
+    var value = inputValue.replaceAll(" ", "");
+    // Replace # with -
+    var replacedValue = value.replace(/#/g, "-");
+
+
+    // Update the input value
+    inputElement.value = replacedValue;
+
+    // Now you can send the replacedValue to the server
+    // Example: You can use AJAX to send the value to the server
+    // (Note: In a real-world scenario, server-side validation is essential)
+  }
+</script>
 
 </body>
 </html>

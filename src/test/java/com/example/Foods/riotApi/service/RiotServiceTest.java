@@ -6,6 +6,7 @@ import com.example.Foods.riotApi.entity.Summoner;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,6 +19,8 @@ public class RiotServiceTest {
     private RiotService riotService;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private SummonerService summonerService;
 
 //    @Test
 //    public void 소환사조회() throws Exception {
@@ -35,9 +38,11 @@ public class RiotServiceTest {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
         Summoner summoner2 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
+        summonerService.saveUser(summoner1);
+        summonerService.saveUser(summoner2);
         //when
-        Summoner data1 = riotService.findById(summoner2.getDataId());
-        Summoner data2 = riotService.findById(summoner1.getDataId());
+        Summoner data1 = summonerService.findById(summoner2.getDataId());
+        Summoner data2 = summonerService.findById(summoner1.getDataId());
         //then
 
         Assertions.assertEquals(data1.getId(),data2.getId());
@@ -46,28 +51,36 @@ public class RiotServiceTest {
 
     @Test
     @Transactional
-    public void findByNameAndTag동작() throws Exception {
+    @DisplayName("findByAndTag로 값을 찾았을 때 저장한 값과 아이디가 같아야됨V1")
+    public void findByNameAndTag동작V1() throws Exception {
         //given
         String input = "괴물쥐-KR3";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        summonerService.saveUser(summoner1);
         //when
         em.flush();
-        Summoner summoner = riotService.findByNameAndTag(nameAndTag[0], nameAndTag[1]);
+        Summoner summoner = summonerService.findByNameAndTag(nameAndTag[0], nameAndTag[1]);
         //then
         assertEquals(summoner.getId(), summoner1.getId());
     }
     @Test
     @Transactional
+    @DisplayName("findByAndTag로 값을 찾았을 때 저장한 값과 아이디가 같아야됨V2")
     public void findByNameAndTag동작V2() throws Exception {
         //given
         String input = "괴물쥐-고라파덕";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        summonerService.saveUser(summoner1);
+
         //when
         em.flush();
-        Summoner summoner = riotService.findByNameAndTag(nameAndTag[0], nameAndTag[1]);
+        Summoner summoner = summonerService.findByNameAndTag(nameAndTag[0], nameAndTag[1]);
         //then
         assertEquals(summoner.getId(), summoner1.getId());
     }
+
+
+
 }
