@@ -38,8 +38,8 @@ public class RiotServiceTest {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
         Summoner summoner2 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
-        summonerService.saveUser(summoner1);
-        summonerService.saveUser(summoner2);
+        summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
+        summonerService.saveUser(summoner2,nameAndTag[1],nameAndTag[0]);
         //when
         Summoner data1 = summonerService.findById(summoner2.getDataId());
         Summoner data2 = summonerService.findById(summoner1.getDataId());
@@ -57,7 +57,7 @@ public class RiotServiceTest {
         String input = "괴물쥐-KR3";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(summoner1);
+        summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
         //when
         em.flush();
         Summoner summoner = summonerService.findByNameAndTag(nameAndTag[0], nameAndTag[1]);
@@ -72,7 +72,7 @@ public class RiotServiceTest {
         String input = "괴물쥐-고라파덕";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(summoner1);
+        summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
 
         //when
         em.flush();

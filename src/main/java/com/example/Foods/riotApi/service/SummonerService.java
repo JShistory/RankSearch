@@ -15,8 +15,12 @@ public class SummonerService {
 
 
     @Transactional
-    public void saveUser(Summoner summoner) {
+    public Long saveUser(Summoner summoner, String tag, String name) {
+        summoner.setPrevId(summoner.getName());
+        summoner.setName(name);
+        summoner.setTag(tag);
         riotRepository.save(summoner);
+        return summoner.getDataId();
     }
 
     public List<Summoner> summonerList(String name) {
@@ -29,6 +33,10 @@ public class SummonerService {
 
     public Summoner findById(Long id) {
         return riotRepository.findById(id).get();
+    }
+
+    public List<Summoner> findAll(){
+        return riotRepository.findAll();
     }
 
 }

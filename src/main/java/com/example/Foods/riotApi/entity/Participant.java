@@ -1,15 +1,29 @@
 package com.example.Foods.riotApi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-
-//룬, 스펠, 아이템, 레벨, 킬, 데스, 어시, 구매한 와드 갯수, 골드, cs
+@Entity
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class ParticipantDto {
+@AllArgsConstructor
+public class Participant {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private int assists;
     private String championName;
     private int deaths;
@@ -38,4 +52,13 @@ public class ParticipantDto {
     private int totalMinionsKilled;
     private int visionScore;
 
+
+    @ManyToOne
+    @JoinColumn(name = "gameInfo_id")
+    @JsonBackReference
+    private GameInfo gameInfo;
+
+    public Participant() {
+
+    }
 }

@@ -29,7 +29,7 @@ public class LeagueEntryServiceTest {
         String input = "문재인-문크예거";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(summoner);
+        summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);
 
 
         //when
@@ -50,7 +50,7 @@ public class LeagueEntryServiceTest {
         String input = "문재인-문크예거";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(summoner);
+        summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);
         //when
         LeagueEntryDTO leagueEntryDTO = riotService.loadSoloRank(summoner.getId(),summoner.getDataId());
         Long l = leagueEntryService.saveRank(summoner,leagueEntryDTO);
@@ -69,7 +69,7 @@ public class LeagueEntryServiceTest {
         String input = "문재인-문크예거";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(summoner);
+        summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);
         //when
         LeagueEntryDTO leagueEntryDTO1 = riotService.loadSoloRank(summoner.getId(),summoner.getDataId());
         Long l1 = leagueEntryService.saveRank(summoner,leagueEntryDTO1);

@@ -1,5 +1,6 @@
 package com.example.Foods.riotApi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
@@ -31,7 +32,8 @@ public class LeagueEntry {
 //    private boolean miniSeries;
 
     @ManyToOne
-    @JoinColumn(name = "summoner_id")
+    @JoinColumn(name = "summoner_dataId")
+    @JsonBackReference
     private Summoner summoner;
 
     @Builder

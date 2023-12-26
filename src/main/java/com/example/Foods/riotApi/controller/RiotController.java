@@ -1,18 +1,26 @@
 package com.example.Foods.riotApi.controller;
 
+import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.LeagueEntry;
 import com.example.Foods.riotApi.entity.LeagueEntryDTO;
+import com.example.Foods.riotApi.entity.Match;
 import com.example.Foods.riotApi.entity.MatchDTO;
+import com.example.Foods.riotApi.entity.MetaData;
+import com.example.Foods.riotApi.entity.MetaDataDTO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.entity.SummonerDTO;
+import com.example.Foods.riotApi.service.GameInfoService;
 import com.example.Foods.riotApi.service.LeagueEntryService;
+import com.example.Foods.riotApi.service.MatchService;
+import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.RiotService;
 import com.example.Foods.riotApi.service.SummonerService;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +42,9 @@ public class RiotController {
     private final RiotService riotService;
     private final SummonerService summonerService;
     private final LeagueEntryService leagueEntryService;
-
-
+    private final MatchService matchService;
+    private final MetaDataService metaDataService;
+    private final GameInfoService gameInfoService;
     @GetMapping()
     public String main(){
         return "riot/home";
@@ -48,7 +57,7 @@ public class RiotController {
         String[] nameAndTag = riotService.splitNameAndTag(summonerName);
 
         Summoner apiResult = riotService.loadUser(nameAndTag[0], nameAndTag[1]);
-        summonerService.saveUser(apiResult);
+        summonerService.saveUser(apiResult,nameAndTag[1],nameAndTag[0]);
         return apiResult;
     }
 
@@ -67,7 +76,7 @@ public class RiotController {
         if(apiResult == null){
             return "riot/notFoundError";
         }
-        summonerService.saveUser(apiResult);
+        summonerService.saveUser(apiResult,nameAndTag[1],nameAndTag[0]);
 
 
         LeagueEntryDTO leagueEntrySoloDTO = riotService.loadSoloRank(apiResult.getId(),apiResult.getDataId());
@@ -82,13 +91,36 @@ public class RiotController {
             Long soloId = leagueEntryService.saveRank(apiResult, leagueEntrySoloDTO);
             solo = leagueEntryService.findById(soloId);
         }
-        //솔로랭크 자유랭크
 
+        //게임 정보 불러오기.
+        List<String> gameInfo = riotService.loadGameList(apiResult.getPuuid(), 0, 10);
+        GameInfo gameInfoData = null;
+        MetaData metaDataData;
+        if(!gameInfo.isEmpty()){
+            for(int i=0; i< gameInfo.size(); i++){
+                gameInfoData = riotService.loadGameInfo(gameInfo.get(i));
+                metaDataData = riotService.loadMetaDataInfo(gameInfo.get(i));
+                matchService.saveMatch(apiResult,gameInfoData,metaDataData);
+            }
+        }
 
+        List<Match> matches = matchService.findBySummoner(apiResult);
+//        for(Match matchData : matches){
+//            List<String> participants = matchData.getMetaData().getParticipants();
+//            List<String> participantsName = new ArrayList<>();
+//            for(String participantsData : participants){
+//                Summoner summoner = riotService.loadUserWithPuuid(participantsData);
+//                participantsName.add(summoner.getName());
+//            }
+//        }
+        List<String> participants = matches.get(0).getMetaData().getParticipants();
+        Summoner summoner = riotService.loadUserWithPuuid(participants.get(0));
+        Summoner summoner1 = riotService.loadUserWithPuuid(participants.get(1));
+        model.addAttribute("test",summoner);
+        model.addAttribute("test1",summoner1);
 
-        List<String> gameInfo = apiResult.getGameInfo();
-        MatchDTO gameData = riotService.loadGameInfo(gameInfo.get(0));
-        Date gameEndTime = riotService.convertUnixTimeToUTC(gameData.getInfo().getGameEndTimestamp());
+        GameInfo time = riotService.loadGameInfo(gameInfo.get(0));
+        Date gameEndTime = riotService.convertUnixTimeToUTC(time.getGameEndTimestamp());
         String diffEndTimeNowTimeFormat_1 = riotService.diffCurrentTimeAndParam(gameEndTime);
         String diffEndTimeNowTimeFormat_2 = riotService.diff(gameEndTime);
 
@@ -97,7 +129,7 @@ public class RiotController {
         model.addAttribute("flexLeagueData",flex);
         model.addAttribute("dateFormat",diffEndTimeNowTimeFormat_2);
         model.addAttribute("diffTime",diffEndTimeNowTimeFormat_1);
-        model.addAttribute("gameData",gameData);
+        model.addAttribute("gameData",gameInfo);
         model.addAttribute("data",apiResult);
         model.addAttribute("time",gameEndTime);
         return "riot/userInfo";

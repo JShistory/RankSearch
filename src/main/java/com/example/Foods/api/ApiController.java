@@ -1,4 +1,4 @@
-package com.example.Foods.api.controller;
+package com.example.Foods.api;
 
 import com.example.Foods.board.entity.Board;
 import com.example.Foods.board.service.BoardService;

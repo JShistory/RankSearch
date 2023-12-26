@@ -1,10 +1,15 @@
 package com.example.Foods.riotApi.service;
 
 import com.example.Foods.riotApi.entity.AccountDTO;
+import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.LeagueEntry;
 import com.example.Foods.riotApi.entity.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.MatchDTO;
+import com.example.Foods.riotApi.entity.MetaData;
+import com.example.Foods.riotApi.entity.MetaDataDTO;
+import com.example.Foods.riotApi.entity.Participant;
+import com.example.Foods.riotApi.entity.ParticipantDto;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.repository.LeagueEntryRepository;
 import com.fasterxml.jackson.core.JsonParser;
@@ -135,13 +140,15 @@ public class RiotService {
             if (result.contains("SOLO")) {
                 JSONParser jsonParser = new JSONParser();
                 JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
-                JSONObject k;
+                JSONObject k = null;
 //                System.out.println("jsonArray"+jsonArray.size());
                 //1은 자유랭크 0은 솔로랭때
-                if (jsonArray.size() == 1 || jsonArray.size() == 2) {
-                    k = (JSONObject) jsonArray.get(0);
-                } else {
-                    return null;
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    k = (JSONObject) jsonArray.get(i);
+                    String queueType = (String) k.get("queueType");
+                    if (queueType.contains("SOLO")) {
+                        break;
+                    }
                 }
 
                 int wins = Integer.valueOf(k.get("wins").toString());
@@ -218,15 +225,15 @@ public class RiotService {
 //                System.out.println("result" + result);
                 JSONParser jsonParser = new JSONParser();
                 JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
-                JSONObject k;
+                JSONObject k = null;
 //                System.out.println("jsonArray"+jsonArray.size());
                 //1은 자유랭크 0은 솔로랭때
-                if (jsonArray.size() == 1) {
-                    k = (JSONObject) jsonArray.get(0);
-                } else if (jsonArray.size() == 2) {
-                    k = (JSONObject) jsonArray.get(1);
-                } else {
-                    return null;
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    k = (JSONObject) jsonArray.get(i);
+                    String queueType = (String) k.get("queueType");
+                    if (queueType.contains("FLEX")) {
+                        break;
+                    }
                 }
                 int wins = Integer.valueOf(k.get("wins").toString());
                 int losses = Integer.valueOf(k.get("losses").toString());
@@ -282,11 +289,11 @@ public class RiotService {
             return null;
         }
         //puuid를 통해 추가적인 정보를 더 획득
-        user = loadUserWithPuuid(accountDTO.getPuuid(), accountDTO.getTagLine(), accountDTO.getGameName());
+        user = loadUserWithPuuid(accountDTO.getPuuid());
         return user;
     }
 
-    public Summoner loadUserWithPuuid(String puuid, String tag, String name) {
+    public Summoner loadUserWithPuuid(String puuid) {
         //유저 찾아보고 있으면 반환
 //        Summoner user = findByNameAndTag(summonerName,tag);
 //        if (user != null) {
@@ -310,14 +317,6 @@ public class RiotService {
             e.printStackTrace();
             return null;
         }
-        //유저 db에 저장
-        List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
-
-        user.setGameInfo(gameInfo);
-        user.setTag(tag);
-        user.setPrevId(user.getName());
-        user.setName(name);
-//        summonerService.saveUser(user);
 
         return user;
     }
@@ -347,13 +346,12 @@ public class RiotService {
             return null;
         }
         //유저 db에 저장
-        List<String> gameInfo = loadGameId(user.getPuuid(), 0, 30);
-        user.setGameInfo(gameInfo);
+
         user.setTag(tag);
         return user;
     }
 
-    public List<String> loadGameId(String puuid, int start, int count) {
+    public List<String> loadGameList(String puuid, int start, int count) {
         List<String> result;
         try {
             HttpClient client = HttpClientBuilder.create().build();
@@ -376,28 +374,236 @@ public class RiotService {
         return result;
     }
 
-    //api 호출로 게임 데이터 가져옴
-    public MatchDTO loadGameInfo(String matchId) {
-        MatchDTO result;
+
+    public MetaDataDTO test(String matchId) {
+        BufferedReader br;
+        MetaDataDTO metaDataDTO;
+
         try {
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet(matchDataUrl + matchId + "?api_key=" + riotApiKey);
-
-            HttpResponse response = client.execute(request);
-
-            if (response.getStatusLine().getStatusCode() != 200) {
-                return null;
+            String urlStr = matchDataUrl + matchId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
             }
+//
+            JSONParser jsonParser = new JSONParser();
+//            JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+            JSONObject k = (JSONObject) jsonObject.get("metadata");
 
-            HttpEntity entity = response.getEntity();
-            result = objectMapper.readValue(entity.getContent(), MatchDTO.class);
+            String dataVersion = k.get("dataVersion").toString();
+            String matchId1 = k.get("matchId").toString();
+            List<String> participants = (List<String>) k.get("participants");
+            metaDataDTO = MetaDataDTO.builder()
+                    .dataVersion(dataVersion)
+                    .matchId(matchId1)
+                    .participants(participants)
+                    .build();
 
         } catch (IOException e) {
             e.printStackTrace();
             return null;
-
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
-        return result;
+        return metaDataDTO;
+
+    }
+
+    //api 호출로 게임 데이터 가져옴
+    public MetaData loadMetaDataInfo(String matchId) {
+        BufferedReader br;
+        MetaData metaData;
+
+        try {
+            String urlStr = matchDataUrl + matchId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+//
+            JSONParser jsonParser = new JSONParser();
+//            JSONArray jsonArray = (JSONArray) jsonParser.parse(result);
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+            JSONObject metadata = (JSONObject) jsonObject.get("metadata");
+
+            String dataVersion = metadata.get("dataVersion").toString();
+            String matchId1 = metadata.get("matchId").toString();
+            List<String> participants = (List<String>) metadata.get("participants");
+            metaData = MetaData.builder()
+                    .dataVersion(dataVersion)
+                    .matchId(matchId1)
+                    .participants(participants)
+                    .build();
+
+//            JSONObject gameInfo = (JSONObject) jsonObject.get("info");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return metaData;
+
+    }
+
+    public List<Participant> loadParticipantsGameInfo(String matchId){
+        BufferedReader br;
+        Participant participantData = null;
+        List<Participant> participant = new ArrayList<>();
+
+        try {
+            String urlStr = matchDataUrl + matchId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+//
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+            JSONObject info = (JSONObject) jsonObject.get("info");
+            JSONArray jsonArray = (JSONArray) info.get("participants");
+
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject participantsData = (JSONObject) jsonArray.get(i);
+                int assists = Integer.valueOf(participantsData.get("assists").toString());
+                int kills = Integer.valueOf(participantsData.get("kills").toString());
+                int deaths = Integer.valueOf(participantsData.get("deaths").toString());
+                int champLevel = Integer.valueOf(participantsData.get("champLevel").toString());
+                int championId = Integer.valueOf(participantsData.get("championId").toString());
+                int teamId = Integer.valueOf(participantsData.get("teamId").toString());
+                int spell1Casts = Integer.valueOf(participantsData.get("spell1Casts").toString());
+                int spell2Casts = Integer.valueOf(participantsData.get("spell2Casts").toString());
+                int item0 = Integer.valueOf(participantsData.get("item0").toString());
+                int item1 = Integer.valueOf(participantsData.get("item1").toString());
+                int item2 = Integer.valueOf(participantsData.get("item2").toString());
+                int item3 = Integer.valueOf(participantsData.get("item3").toString());
+                int item4 = Integer.valueOf(participantsData.get("item4").toString());
+                int item5 = Integer.valueOf(participantsData.get("item5").toString());
+                int item6 = Integer.valueOf(participantsData.get("item6").toString());
+
+                int goldEarned = Integer.valueOf(participantsData.get("goldEarned").toString());
+                int wardsKilled = Integer.valueOf(participantsData.get("wardsKilled").toString());
+                int wardsPlaced = Integer.valueOf(participantsData.get("wardsPlaced").toString());
+                int totalMinionsKilled = Integer.valueOf(participantsData.get("totalMinionsKilled").toString());
+                int visionScore = Integer.valueOf(participantsData.get("visionScore").toString());
+                boolean win = (boolean) participantsData.get("win");
+                String summonerName = participantsData.get("summonerName").toString();
+                String championName = participantsData.get("championName").toString();
+                participantData = Participant.builder()
+                        .item0(item0)
+                        .item1(item1)
+                        .item2(item2)
+                        .item3(item3)
+                        .item4(item4)
+                        .item5(item5)
+                        .item6(item6)
+                        .assists(assists)
+                        .kills(kills)
+                        .deaths(deaths)
+                        .championId(championId)
+                        .champLevel(champLevel)
+                        .championName(championName)
+                        .goldEarned(goldEarned)
+                        .spell1Casts(spell1Casts)
+                        .spell2Casts(spell2Casts)
+                        .win(win)
+                        .teamId(teamId)
+                        .goldSpent(goldEarned)
+                        .summonerName(summonerName)
+                        .visionScore(visionScore)
+                        .totalMinionsKilled(totalMinionsKilled)
+                        .wardsKilled(wardsKilled)
+                        .wardsPlaced(wardsPlaced)
+                        .build();
+
+                participant.add(participantData);
+
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return participant;
+
+    }
+
+    public GameInfo loadGameInfo(String matchId) {
+        BufferedReader br;
+        GameInfo gameInfo;
+        ParticipantDto participantDto;
+
+        try {
+            String urlStr = matchDataUrl + matchId + "?api_key=" + riotApiKey;
+            URL url = new URL(urlStr);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String result = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+//
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+            JSONObject info = (JSONObject) jsonObject.get("info");
+
+            long gameCreation = Long.valueOf(info.get("gameCreation").toString());
+            long gameDuration = Long.valueOf(info.get("gameDuration").toString());
+            long gameEndTimestamp = Long.valueOf(info.get("gameEndTimestamp").toString());
+            long gameId = Long.valueOf(info.get("gameId").toString());
+            long gameStartTimestamp = Long.valueOf(info.get("gameStartTimestamp").toString());
+            String gameMode = info.get("gameMode").toString();
+            String gameName = info.get("gameName").toString();
+            String gameType = info.get("gameType").toString();
+            String gameVersion = info.get("gameVersion").toString();
+            int mapId = Integer.valueOf(info.get("mapId").toString());
+
+            gameInfo = GameInfo.builder()
+                    .gameId(gameId)
+                    .gameMode(gameMode)
+                    .gameType(gameType)
+                    .gameVersion(gameVersion)
+                    .gameCreation(gameCreation)
+                    .gameName(gameName)
+                    .gameStartTimestamp(gameStartTimestamp)
+                    .gameEndTimestamp(gameEndTimestamp)
+                    .gameDuration(gameDuration)
+                    .mapId(mapId)
+                    .build();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return gameInfo;
+
     }
 
     public Date convertUnixTimeToUTC(Long unixTimeStamp) {
