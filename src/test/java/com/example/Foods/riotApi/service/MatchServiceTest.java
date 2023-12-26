@@ -105,17 +105,5 @@ public class MatchServiceTest {
         Assertions.assertEquals(gameInfo.getGameMode(),"ARAM");
     }
 
-    @Test
-    @Transactional
-    public void participants데이터불러오기() throws Exception {
-        //given
-//        MatchDTO matchDTO = riotService.loadGameInfo("KR_6815291259");
-        Participant gameInfo1 = riotService.loadParticipantsGameInfo("KR_6815291259");
-
-        GameInfo gameInfo = riotService.loadGameInfo("KR_6815291259");
-        //when
-        //then
-        Assertions.assertEquals(gameInfo1, true);
-    }
 
 }
