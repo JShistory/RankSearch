@@ -1,13 +1,13 @@
 package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,8 +26,9 @@ public class MetaData {
     @OneToOne(mappedBy = "metaData")
     @JsonBackReference
     @JoinColumn(name = "match_id")
-    private Match match;
-    private List<String> participants;
+    private MatchData matchData;
+
+    private List<String> participants = new ArrayList<>();
 
     @Builder
     public MetaData(String dataVersion, String matchId, List<String> participants) {
@@ -40,7 +41,7 @@ public class MetaData {
 
     }
 
-    public void putMatch(Match match){
-        this.match = match;
+    public void putMatch(MatchData matchData){
+        this.matchData = matchData;
     }
 }

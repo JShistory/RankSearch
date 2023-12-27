@@ -1,7 +1,6 @@
 package com.example.Foods.riotApi.service;
 
 import com.example.Foods.riotApi.entity.GameInfo;
-import com.example.Foods.riotApi.entity.Match;
 import com.example.Foods.riotApi.repository.GameInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
