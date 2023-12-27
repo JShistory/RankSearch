@@ -1,5 +1,6 @@
 "use client";
 
+import { PROFILE_ICON_ID } from "@/const/api";
 import React from "react";
 import styled from "styled-components";
 import SearchBar from "./SearchBar";
