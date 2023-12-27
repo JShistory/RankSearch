@@ -38,6 +38,7 @@ dependencies {
 	testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.0'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.33'
+	runtimeOnly 'com.h2database:h2'
 
 
 
@@ -48,6 +49,6 @@ tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
 }
