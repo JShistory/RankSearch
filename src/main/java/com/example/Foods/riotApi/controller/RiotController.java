@@ -1,38 +1,25 @@
 package com.example.Foods.riotApi.controller;
 
 import com.example.Foods.riotApi.entity.GameInfo;
-import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.LeagueEntry;
 import com.example.Foods.riotApi.entity.LeagueEntryDTO;
-import com.example.Foods.riotApi.entity.Match;
-import com.example.Foods.riotApi.entity.MatchDTO;
+import com.example.Foods.riotApi.entity.MatchData;
 import com.example.Foods.riotApi.entity.MetaData;
-import com.example.Foods.riotApi.entity.MetaDataDTO;
 import com.example.Foods.riotApi.entity.Summoner;
-import com.example.Foods.riotApi.entity.SummonerDTO;
 import com.example.Foods.riotApi.service.GameInfoService;
 import com.example.Foods.riotApi.service.LeagueEntryService;
 import com.example.Foods.riotApi.service.MatchService;
 import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.RiotService;
 import com.example.Foods.riotApi.service.SummonerService;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -93,18 +80,23 @@ public class RiotController {
         }
 
         //게임 정보 불러오기.
-        List<String> gameInfo = riotService.loadGameList(apiResult.getPuuid(), 0, 10);
+        List<String> gameInfo = riotService.loadGameList(apiResult.getPuuid(), 0, 5);
         GameInfo gameInfoData = null;
         MetaData metaDataData;
-        if(!gameInfo.isEmpty()){
+        if(gameInfo.size() != 0){
             for(int i=0; i< gameInfo.size(); i++){
                 gameInfoData = riotService.loadGameInfo(gameInfo.get(i));
                 metaDataData = riotService.loadMetaDataInfo(gameInfo.get(i));
-                matchService.saveMatch(apiResult,gameInfoData,metaDataData);
+                gameInfoService.saveGameInfo(gameInfoData);
+                metaDataService.saveMetaData(metaDataData);
+                Long l = matchService.saveMatch(apiResult, gameInfoData, metaDataData);
+                MatchData matchData = matchService.findById(l);
+                gameInfoData.putMatch(matchData);
+                metaDataData.putMatch(matchData);
             }
         }
 
-        List<Match> matches = matchService.findBySummoner(apiResult);
+        List<MatchData> matchData = matchService.findBySummoner(apiResult);
 //        for(Match matchData : matches){
 //            List<String> participants = matchData.getMetaData().getParticipants();
 //            List<String> participantsName = new ArrayList<>();
@@ -113,7 +105,7 @@ public class RiotController {
 //                participantsName.add(summoner.getName());
 //            }
 //        }
-        List<String> participants = matches.get(0).getMetaData().getParticipants();
+        List<String> participants = matchData.get(0).getMetaData().getParticipants();
         Summoner summoner = riotService.loadUserWithPuuid(participants.get(0));
         Summoner summoner1 = riotService.loadUserWithPuuid(participants.get(1));
         model.addAttribute("test",summoner);

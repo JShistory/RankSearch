@@ -2,7 +2,6 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +16,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Match {
+public class MatchData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -37,13 +35,13 @@ public class Match {
     private GameInfo gameInfo;
 
     @Builder
-    public Match(Summoner summoner, GameInfo gameInfo, MetaData metaData){
+    public MatchData(Summoner summoner, GameInfo gameInfo, MetaData metaData){
         this.summoner = summoner;
         this.metaData = metaData;
         this.gameInfo = gameInfo;
     }
 
-    public Match(){
+    public MatchData(){
 
     }
     public void putMetaData(MetaData metaData){

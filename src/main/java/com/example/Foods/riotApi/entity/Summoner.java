@@ -2,22 +2,15 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,14 +41,14 @@ public class Summoner {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY)
-    private List<Match> matches = new ArrayList<>();
+    private List<MatchData> matchData = new ArrayList<>();
 
     public void putLeagueData(LeagueEntry leagueEntry){
         this.leagueEntries.add(leagueEntry);
     }
 
-    public void putGameData(Match match){
-        this.matches.add(match);
+    public void putGameData(MatchData matchData){
+        this.matchData.add(matchData);
     }
 
 

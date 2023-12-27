@@ -1,6 +1,5 @@
 package com.example.Foods.riotApi.service;
 
-import com.example.Foods.riotApi.entity.Match;
 import com.example.Foods.riotApi.entity.MetaData;
 import com.example.Foods.riotApi.repository.MetaDataRepository;
 import lombok.RequiredArgsConstructor;

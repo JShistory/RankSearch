@@ -2,6 +2,7 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,7 @@ public class LeagueEntry {
     private String leagueId;
     private String queueType;
     private String tier;
+    @Column(name = "`rank`")
     private String rank;
     private int leaguePoints;
     private int wins;

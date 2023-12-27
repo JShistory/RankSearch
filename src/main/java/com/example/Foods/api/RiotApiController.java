@@ -4,7 +4,7 @@ import com.example.Foods.response.BasicResponse;
 import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.LeagueEntry;
 import com.example.Foods.riotApi.entity.LeagueEntryDTO;
-import com.example.Foods.riotApi.entity.Match;
+import com.example.Foods.riotApi.entity.MatchData;
 import com.example.Foods.riotApi.entity.MetaData;
 import com.example.Foods.riotApi.entity.Participant;
 import com.example.Foods.riotApi.entity.Summoner;
@@ -147,9 +147,9 @@ public class RiotApiController {
             metaDataService.saveMetaData(metaData);
 
             Long matchId = matchService.saveMatch(summoner, gameInfo, metaData);
-            Match match = matchService.findById(matchId);
-            gameInfo.putMatch(match);
-            metaData.putMatch(match);
+            MatchData matchData = matchService.findById(matchId);
+            gameInfo.putMatch(matchData);
+            metaData.putMatch(matchData);
 
             List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
             for(Participant data : participantList){
@@ -158,7 +158,7 @@ public class RiotApiController {
                 gameInfo.putParticipants(participantServiceById);
             }
 
-            summoner.putGameData(match);
+            summoner.putGameData(matchData);
         }
 
 
