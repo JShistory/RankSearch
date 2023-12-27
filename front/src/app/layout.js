@@ -1,3 +1,4 @@
+import QueryProvider from "@/hooks/QueryClient";
 import GlobalStyles from "@/styles/global";
 
 export default function RootLayout({ children }) {
@@ -5,7 +6,7 @@ export default function RootLayout({ children }) {
     <html>
       <body suppressHydrationWarning={true}>
         <GlobalStyles />
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

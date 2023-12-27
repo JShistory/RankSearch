@@ -1,10 +1,31 @@
 "use client";
 
 import { axiosInstance } from "@/apis/axiosInstace";
-import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+
 import styled from "styled-components";
 
 const SummonerPage = () => {
+  const fetchData = async () => {
+    const res = await axiosInstance.get(`/summoner?input=${name}`);
+    return res.data;
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["summonerData"],
+    queryFn: () => fetchData("윤국현"),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const summonerName = data?.result[0]?.name;
+
   return (
     <S.Wrapper>
       <S.Container>
