@@ -1,14 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton } from "@mui/material";
+import { axiosInstance } from "@/apis/axiosInstace";
+import { useRouter } from "next/navigation";
 
 const SearchBar = () => {
+  const ref = useRef(null);
+  const router = useRouter();
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    const keyword = ref.current.value.trim();
+    try {
+      router.push(`/summoner/${keyword}`);
+      const url = axiosInstance.get(`summoner?input=${keyword}`);
+
+      const res = await url;
+      const data = await res.data;
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
   return (
-    <S.Search>
-      <S.Input type={"text"} placeholder="플레이어 이름 + #KR1" />
+    <S.Search onSubmit={handleSearch}>
+      <S.Input type={"text"} placeholder="플레이어 이름 + #KR1" ref={ref} />
       <IconButton>
         <SearchIcon />
       </IconButton>
@@ -20,7 +39,7 @@ export default SearchBar;
 
 const S = {};
 
-S.Search = styled.div`
+S.Search = styled.form`
   width: 600px;
   height: 50px;
   border: 1px solid #000;
