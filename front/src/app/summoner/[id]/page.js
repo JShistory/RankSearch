@@ -2,18 +2,22 @@
 
 import { axiosInstance } from "@/apis/axiosInstace";
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
 import styled from "styled-components";
 
 const SummonerPage = () => {
+  const params = useParams();
+  const id = params.id;
+  // console.log(id);
   const fetchData = async () => {
-    const res = await axiosInstance.get(`/summoner?input=${name}`);
+    const res = await axiosInstance.get(`/summoner?input=${id}`);
     return res.data;
   };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["summonerData"],
-    queryFn: () => fetchData("윤국현"),
+    queryFn: () => fetchData(id),
   });
 
   if (isLoading) {
@@ -25,6 +29,7 @@ const SummonerPage = () => {
   }
 
   const summonerName = data?.result[0]?.name;
+  console.log(summonerName);
 
   return (
     <S.Wrapper>
