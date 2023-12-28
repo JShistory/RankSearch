@@ -41,10 +41,10 @@ public class RiotApiController {
     private final ParticipantService participantService;
 
     @GetMapping("/summoners")
-    public ResponseEntity<BasicResponse> summoners(){
+    public ResponseEntity<BasicResponse> summoners() {
         BasicResponse basicResponse = new BasicResponse();
         List<Summoner> summonerList = summonerService.findAll();
-        if(!summonerList.isEmpty()) {
+        if (!summonerList.isEmpty()) {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
@@ -52,8 +52,7 @@ public class RiotApiController {
                     .result(Arrays.asList(summonerList.toArray()))
                     .count(1)
                     .build();
-        }
-        else{
+        } else {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .httpStatus(HttpStatus.NOT_FOUND)
@@ -67,20 +66,19 @@ public class RiotApiController {
     }
 
     @GetMapping("/summoner")
-    public ResponseEntity<BasicResponse> findSummoner(String input){
+    public ResponseEntity<BasicResponse> findSummoner(String input) {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
 
         Summoner summoner = summonerService.findByNameAndTag(name, tag);
-        if(summoner == null){
+        if (summoner == null) {
             ResponseEntity<BasicResponse> entity = saveSummoner(input);
-            if(entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)){
+            if (entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
                 basicResponse = entity.getBody();
 
-            }
-            else {
+            } else {
                 List<Object> result = entity.getBody().getResult();
                 basicResponse = BasicResponse.builder()
                         .code(HttpStatus.OK.value())
@@ -90,8 +88,7 @@ public class RiotApiController {
                         .count(1)
                         .build();
             }
-        }
-        else {
+        } else {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
@@ -105,14 +102,14 @@ public class RiotApiController {
     }
 
     @PostMapping("/summoner")
-    public ResponseEntity<BasicResponse> saveSummoner(String input){
+    public ResponseEntity<BasicResponse> saveSummoner(String input) {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
 
         Summoner summoner = riotService.loadUser(nameAndTag[0], nameAndTag[1]);
-        if(summoner == null){
+        if (summoner == null) {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .httpStatus(HttpStatus.NOT_FOUND)
@@ -129,12 +126,12 @@ public class RiotApiController {
         LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
         LeagueEntry flex = null;
         LeagueEntry solo = null;
-        if(soloLeagueEntryDTO != null){
+        if (soloLeagueEntryDTO != null) {
             Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
             solo = leagueEntryService.findById(soloRankId);
         }
 
-        if(flexLeagueEntryDTO != null){
+        if (flexLeagueEntryDTO != null) {
             Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
             flex = leagueEntryService.findById(flexRankId);
         }
@@ -142,9 +139,23 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
         //최근 5개의 게임을 불러옴
         List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 5);
-        for(String game : gameList){
-            GameInfo gameInfo = riotService.loadGameInfo(game);
-            MetaData metaData = riotService.loadMetaDataInfo(game);
+        GameInfo gameInfo;
+        MetaData metaData;
+        for (String game : gameList) {
+            List<MatchData> matchDataList = summoner.getMatchData();
+            boolean isContains = false;
+            for (MatchData matches : matchDataList) {
+                if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(
+                        game.split("_")[1])) {
+                    isContains = true;
+                    break;
+                }
+            }
+            if (isContains) {
+                continue;
+            }
+            gameInfo = riotService.loadGameInfo(game);
+            metaData = riotService.loadMetaDataInfo(game);
             gameInfoService.saveGameInfo(gameInfo);
             metaDataService.saveMetaData(metaData);
 
@@ -154,7 +165,7 @@ public class RiotApiController {
             metaData.putMatch(matchData);
 
             List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
-            for(Participant data : participantList){
+            for (Participant data : participantList) {
                 Long savedParticipant = participantService.saveParticipant(data, gameInfo);
                 Participant participantServiceById = participantService.findById(savedParticipant);
                 gameInfo.putParticipants(participantServiceById);
@@ -162,7 +173,6 @@ public class RiotApiController {
 
             summoner.putGameData(matchData);
         }
-
 
         basicResponse = BasicResponse.builder()
                 .code(HttpStatus.OK.value())
@@ -172,7 +182,7 @@ public class RiotApiController {
                 .count(1)
                 .build();
 
-        return new ResponseEntity<>(basicResponse,basicResponse.getHttpStatus());
+        return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
 
     }
 }
