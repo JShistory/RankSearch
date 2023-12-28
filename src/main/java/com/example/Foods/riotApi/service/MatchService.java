@@ -33,4 +33,8 @@ public class MatchService {
     public List<MatchData> findBySummoner(Summoner summoner){
         return matchRepository.findBySummoner(summoner);
     }
+
+    public MatchData findByGameInfo(GameInfo gameInfo){
+        return matchRepository.findByGameInfo(gameInfo);
+    }
 }

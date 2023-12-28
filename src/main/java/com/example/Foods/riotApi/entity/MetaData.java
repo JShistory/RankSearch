@@ -1,6 +1,7 @@
 package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class MetaData {
     @JoinColumn(name = "match_id")
     private MatchData matchData;
 
+    @Column(length = 10000)
     private List<String> participants = new ArrayList<>();
 
     @Builder
