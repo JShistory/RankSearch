@@ -32,6 +32,7 @@ public class RiotController {
     private final MatchService matchService;
     private final MetaDataService metaDataService;
     private final GameInfoService gameInfoService;
+
     @GetMapping()
     public String main(){
         return "riot/home";

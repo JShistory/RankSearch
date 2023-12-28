@@ -22,18 +22,38 @@
 <form action="/riot/summonerByName" method="get">
     <label for="summonerName">소환사명:</label>
     <input type="text" id="summonerName" name="summonerName" required>
-    <button type="submit">전적 검색</button>
+    <button onclick="replaceHash()">검색하기</button>
 </form>
+<label> 태그를 입력하려면 #를 사용해주세요 ex)Hide on Bush#KR1</label>
+<br>
+<label> 태그 미 입력시 기본 값은 KR1입니다</label>
+
 <!-- 소환사 정보를 담은 객체 (예제로 리스트 사용) -->
 
 <div th:each="summoner : ${summonerList}">
-    <a class="summoner" th:value="${summoner}" th:href="@{/riot/summonerByName(summonerName=${summoner.getName()+'-'+summoner.getTag()} )}">
+    <a class="summoner" th:value="${summoner}" th:href="@{/riot/summonerByName(summonerName=${summoner.getName()+'-'+summoner.getTag()})}">
         <p>소환사명: <span th:text="${summoner.getName() +'#'+ summoner.getTag()}"></span></p>
         <p>소환사레벨: <span th:text="${summoner.getSummonerLevel()}"></span></p>
     </a>
 </div>
 
+<script>
+    function replaceHash() {
+        var inputElement = document.getElementById("summonerName");
+        var inputValue = inputElement.value;
+
+        var value = inputValue.replaceAll(" ", "");
+        // Replace # with -
+        var replacedValue = value.replace(/#/g, "-");
 
 
+        // Update the input value
+        inputElement.value = replacedValue;
+
+        // Now you can send the replacedValue to the server
+        // Example: You can use AJAX to send the value to the server
+        // (Note: In a real-world scenario, server-side validation is essential)
+    }
+</script>
 </body>
 </html>
