@@ -2,9 +2,6 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -42,7 +39,7 @@ public class GameInfo {
 
     @JsonBackReference
     @OneToOne(mappedBy = "gameInfo")
-    private Match match;
+    private MatchData matchData;
 
     @Builder
     public GameInfo(Long gameCreation, Long gameDuration, Long gameEndTimestamp, Long gameId, String gameMode, String gameName, Long gameStartTimestamp, String gameType
@@ -62,8 +59,8 @@ public class GameInfo {
     public GameInfo() {
 
     }
-    public void putMatch(Match match){
-        this.match = match;
+    public void putMatch(MatchData matchData){
+        this.matchData = matchData;
     }
     public void putParticipants(Participant participant){
         this.participants.add(participant);

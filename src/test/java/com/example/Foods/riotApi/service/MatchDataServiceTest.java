@@ -3,14 +3,9 @@ package com.example.Foods.riotApi.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.Foods.riotApi.entity.GameInfo;
-import com.example.Foods.riotApi.entity.GameInfoDto;
-import com.example.Foods.riotApi.entity.Match;
-import com.example.Foods.riotApi.entity.MatchDTO;
+import com.example.Foods.riotApi.entity.MatchData;
 import com.example.Foods.riotApi.entity.MetaData;
-import com.example.Foods.riotApi.entity.MetaDataDTO;
-import com.example.Foods.riotApi.entity.Participant;
 import com.example.Foods.riotApi.entity.Summoner;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -19,25 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class MatchServiceTest {
+public class MatchDataServiceTest {
     @Autowired
     private RiotService riotService;
     @Autowired
-    private EntityManager em;
-    @Autowired
-    private SummonerService summonerService;
-    @Autowired
     private MatchService matchService;
-    @Autowired
-    private LeagueEntryService leagueEntryService;
 
     @Autowired
     private MetaDataService metaDataService;
     @Autowired
     private GameInfoService gameInfoService;
-
-    @Autowired
-    private ParticipantService participantService;
 
     @Test
     @Transactional
@@ -46,7 +32,7 @@ public class MatchServiceTest {
         String input = "1Byte";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 30);
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 3);
         MetaData metaDataDTO = riotService.loadMetaDataInfo(gameList.get(0));
         GameInfo gameInfoDto = riotService.loadGameInfo(gameList.get(0));
 
@@ -76,10 +62,10 @@ public class MatchServiceTest {
         Long l = matchService.saveMatch(summoner, gameInfo, metaData);
 
         //then
-        Match match = matchService.findById(l);
-        metaData.putMatch(match);
-        gameInfo.putMatch(match);
-        assertEquals(match.getSummoner().getName(), summoner.getName());
+        MatchData matchData = matchService.findById(l);
+        metaData.putMatch(matchData);
+        gameInfo.putMatch(matchData);
+        assertEquals(matchData.getSummoner().getName(), summoner.getName());
 
     }
 
@@ -105,17 +91,5 @@ public class MatchServiceTest {
         Assertions.assertEquals(gameInfo.getGameMode(),"ARAM");
     }
 
-    @Test
-    @Transactional
-    public void participants데이터불러오기() throws Exception {
-        //given
-//        MatchDTO matchDTO = riotService.loadGameInfo("KR_6815291259");
-        Participant gameInfo1 = riotService.loadParticipantsGameInfo("KR_6815291259");
-
-        GameInfo gameInfo = riotService.loadGameInfo("KR_6815291259");
-        //when
-        //then
-        Assertions.assertEquals(gameInfo1, true);
-    }
 
 }

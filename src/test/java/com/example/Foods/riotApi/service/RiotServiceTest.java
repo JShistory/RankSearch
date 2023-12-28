@@ -26,7 +26,7 @@ public class RiotServiceTest {
 //    public void 소환사조회() throws Exception {
 //        //given
 //        Summoner summoner1 = riotService.loadUserWithTag("1Byte", "KR1");
-//        //when
+//        //whenloadParticipantsGameInfo
 //
 //        //then
 //    }
