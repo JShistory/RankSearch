@@ -1,15 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton } from "@mui/material";
 
+import { useRouter } from "next/navigation";
+
 const SearchBar = () => {
+  const ref = useRef(null);
+  const router = useRouter();
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    let keyword = ref.current.value.trim();
+    keyword = keyword.replace(/#/g, "-");
+    router.push(`/summoner/${keyword}`);
+    ref.current.value = "";
+  };
+
   return (
-    <S.Search>
-      <S.Input type={"text"} placeholder="플레이어 이름 + #KR1" />
-      <IconButton>
+    <S.Search onSubmit={handleSearch}>
+      <S.Input type={"text"} placeholder="플레이어 이름 + #KR1" ref={ref} />
+      <IconButton type="button" onClick={handleSearch}>
         <SearchIcon />
       </IconButton>
     </S.Search>
@@ -20,7 +33,7 @@ export default SearchBar;
 
 const S = {};
 
-S.Search = styled.div`
+S.Search = styled.form`
   width: 600px;
   height: 50px;
   border: 1px solid #000;
