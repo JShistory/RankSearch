@@ -27,17 +27,10 @@ import org.springframework.stereotype.Service;
 public class LeagueEntryService {
     private final LeagueEntryRepository leagueEntryRepository;
 
-
-    @Value("https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/")
-    private String rankUrl;
-
-    @Value("${riot.api.key}")
-    private String riotApiKey;
-
     @Transactional
     public Long saveRank(Summoner summoner, LeagueEntryDTO leagueEntryDto) {
         LeagueEntry entry = leagueEntryRepository.findByLeagueId(leagueEntryDto.getLeagueId());
-        if(entry != null){
+        if (entry != null) {
             return entry.getId();
         }
 
@@ -55,15 +48,15 @@ public class LeagueEntryService {
         return leagueEntry.getId();
     }
 
-    public LeagueEntry findById(Long id){
+    public LeagueEntry findById(Long id) {
         return leagueEntryRepository.findById(id).get();
     }
 
-    public List<LeagueEntry> findBySummoner(Summoner summoner){
+    public List<LeagueEntry> findBySummoner(Summoner summoner) {
         return leagueEntryRepository.findBySummoner(summoner);
     }
 
-    public List<LeagueEntry> findAll(){
+    public List<LeagueEntry> findAll() {
         return leagueEntryRepository.findAll();
     }
 }

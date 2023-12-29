@@ -2,6 +2,7 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -34,11 +35,11 @@ public class GameInfo {
     private int mapId;
     private int queueId;
     @JsonManagedReference
-    @OneToMany(mappedBy = "gameInfo", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gameInfo", cascade = CascadeType.ALL)
     private List<Participant> participants = new ArrayList<>();
 
     @JsonBackReference
-    @OneToOne(mappedBy = "gameInfo")
+    @OneToOne(mappedBy = "gameInfo", cascade = CascadeType.ALL)
     private MatchData matchData;
 
     @Builder

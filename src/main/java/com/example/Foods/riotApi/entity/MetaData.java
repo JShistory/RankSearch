@@ -1,8 +1,10 @@
 package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +26,7 @@ public class MetaData {
 
     private String dataVersion;
     private String matchId;
-    @OneToOne(mappedBy = "metaData")
+    @OneToOne(mappedBy = "metaData", cascade = CascadeType.ALL)
     @JsonBackReference
     @JoinColumn(name = "match_id")
     private MatchData matchData;
