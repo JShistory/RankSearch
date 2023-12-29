@@ -2,7 +2,6 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,11 +36,11 @@ public class Summoner {
     private String prevId;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "summoner",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY)
     private List<LeagueEntry> leagueEntries = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "summoner",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY)
     private List<MatchData> matchData = new ArrayList<>();
 
     public void putLeagueData(LeagueEntry leagueEntry){
