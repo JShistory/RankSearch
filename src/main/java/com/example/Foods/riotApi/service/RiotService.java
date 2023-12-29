@@ -290,6 +290,8 @@ public class RiotService {
         }
         //puuid를 통해 추가적인 정보를 더 획득
         user = loadUserWithPuuid(accountDTO.getPuuid());
+        user.setPrevId(user.getName());
+        user.setName(accountDTO.getGameName());
         return user;
     }
 

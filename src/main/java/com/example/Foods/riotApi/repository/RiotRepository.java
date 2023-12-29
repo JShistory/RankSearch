@@ -9,4 +9,5 @@ public interface RiotRepository extends JpaRepository<Summoner,Long> {
 //    Summoner findByName(String name);
     Summoner findByNameAndTag(String name, String tag);
     List<Summoner> findByName(String name);
+    List<Summoner> findByAccountId(String accountId);
 }

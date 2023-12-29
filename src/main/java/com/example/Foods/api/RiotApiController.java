@@ -73,22 +73,28 @@ public class RiotApiController {
         String tag = nameAndTag[1];
 
         Summoner summoner = summonerService.findByNameAndTag(name, tag);
-        if (summoner != null) {
+        if (summoner == null) {
+            ResponseEntity<BasicResponse> entity = saveSummoner(input);
+            if (entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                basicResponse = entity.getBody();
 
+            } else {
+                List<Object> result = entity.getBody().getResult();
+                basicResponse = BasicResponse.builder()
+                        .code(HttpStatus.OK.value())
+                        .httpStatus(HttpStatus.OK)
+                        .result(result)
+                        .message("소환사 찾기 성공")
+                        .count(1)
+                        .build();
+            }
+        } else {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
                     .result(Collections.singletonList(summoner))
                     .message("소환사 찾기 성공")
                     .count(1)
-                    .build();
-        } else {
-            basicResponse = BasicResponse.builder()
-                    .code(HttpStatus.NOT_FOUND.value())
-                    .httpStatus(HttpStatus.NOT_FOUND)
-                    .result(Collections.emptyList())
-                    .message("소환사 찾기 실패")
-                    .count(0)
                     .build();
         }
 
@@ -102,7 +108,7 @@ public class RiotApiController {
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
 
-        Summoner summoner = riotService.loadUser(nameAndTag[0], nameAndTag[1]);
+        Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         if (summoner == null) {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
