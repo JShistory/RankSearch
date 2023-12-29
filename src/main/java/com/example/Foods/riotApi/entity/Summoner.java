@@ -37,11 +37,11 @@ public class Summoner {
     private String prevId;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "summoner",cascade = CascadeType.ALL)
     private List<LeagueEntry> leagueEntries = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "summoner",cascade = CascadeType.ALL)
     private List<MatchData> matchData = new ArrayList<>();
 
     public void putLeagueData(LeagueEntry leagueEntry){

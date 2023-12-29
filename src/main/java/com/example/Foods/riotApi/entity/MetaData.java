@@ -26,7 +26,7 @@ public class MetaData {
 
     private String dataVersion;
     private String matchId;
-    @OneToOne(mappedBy = "metaData",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "metaData", cascade = CascadeType.ALL)
     @JsonBackReference
     @JoinColumn(name = "match_id")
     private MatchData matchData;

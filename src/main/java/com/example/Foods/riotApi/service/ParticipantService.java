@@ -14,6 +14,7 @@ public class ParticipantService {
 
     @Transactional
     public Long saveParticipant(Participant participant, GameInfo gameInfo){
+
         participant.setGameInfo(gameInfo);
         Participant save = participantRepository.save(participant);
         return save.getId();
