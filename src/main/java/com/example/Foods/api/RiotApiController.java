@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -132,7 +134,7 @@ public class RiotApiController {
         summoner.putLeagueData(solo);
         summoner.putLeagueData(flex);
         //최근 5개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 5);
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 10);
         GameInfo gameInfo;
         MetaData metaData;
         for (String game : gameList) {
@@ -179,4 +181,33 @@ public class RiotApiController {
         return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
 
     }
+
+    @DeleteMapping("/summoner/{id}")
+    public ResponseEntity<BasicResponse> deleteSummoner(@PathVariable Long id) {
+        BasicResponse basicResponse;
+        Summoner summoner = summonerService.findById(id);
+        if (summoner == null) {
+            basicResponse = BasicResponse.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .message("소환사를 찾을 수 없습니다.")
+                    .result(Collections.emptyList())
+                    .count(0)
+                    .build();
+            return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+        }
+        summonerService.deleteSummoner(summoner);
+        basicResponse = BasicResponse.builder()
+                .code(HttpStatus.OK.value())
+                .httpStatus(HttpStatus.OK)
+                .message("소환사 삭제 성공")
+                .result(Collections.singletonList(summoner.getDataId()))
+                .count(1)
+                .build();
+
+        return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+
+
+    }
+
 }
