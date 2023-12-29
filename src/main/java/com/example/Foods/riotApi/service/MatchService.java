@@ -16,6 +16,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     @Transactional
     public Long saveMatch(Summoner summoner, GameInfo gameInfo, MetaData metaData) {
+
         MatchData matchData = MatchData.builder()
                 .gameInfo(gameInfo)
                 .metaData(metaData)

@@ -39,4 +39,9 @@ public class SummonerService {
         return riotRepository.findAll();
     }
 
+    @Transactional
+    public void deleteSummoner(Summoner summoner){
+        riotRepository.delete(summoner);
+    }
+
 }
