@@ -35,11 +35,11 @@ public class GameInfo {
     private int mapId;
     private int queueId;
     @JsonManagedReference
-    @OneToMany(mappedBy = "gameInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "gameInfo", cascade = CascadeType.ALL)
     private List<Participant> participants = new ArrayList<>();
 
     @JsonBackReference
-    @OneToOne(mappedBy = "gameInfo",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gameInfo", cascade = CascadeType.ALL)
     private MatchData matchData;
 
     @Builder
