@@ -2,7 +2,9 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,11 +27,11 @@ public class MatchData {
     @JoinColumn(name = "summoner_dataId")
     @JsonBackReference
     private Summoner summoner;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JoinColumn(name = "metaData_id")
     private MetaData metaData;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JoinColumn(name = "gameInfo_id")
     private GameInfo gameInfo;

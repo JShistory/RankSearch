@@ -83,10 +83,9 @@ public class RiotController {
         List<String> gameInfo = riotService.loadGameList(apiResult.getPuuid(), 0, 5);
         GameInfo gameInfoData = null;
         MetaData metaDataData;
+        List<MatchData> matchDataList = matchService.findBySummoner(apiResult);
         if (gameInfo.size() != 0) {
             for (int i = 0; i < gameInfo.size(); i++) {
-
-                List<MatchData> matchDataList = apiResult.getMatchData();
                 boolean isContains = false;
                 for (MatchData matches : matchDataList) {
                     if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(

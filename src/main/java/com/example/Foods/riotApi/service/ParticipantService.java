@@ -3,6 +3,7 @@ package com.example.Foods.riotApi.service;
 import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.Participant;
 import com.example.Foods.riotApi.repository.ParticipantRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class ParticipantService {
     private final ParticipantRepository participantRepository;
 
+    @Transactional
     public Long saveParticipant(Participant participant, GameInfo gameInfo){
         participant.setGameInfo(gameInfo);
         Participant save = participantRepository.save(participant);
