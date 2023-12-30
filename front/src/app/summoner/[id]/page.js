@@ -1,8 +1,8 @@
 "use client";
 
-import { axiosInstance } from "@/apis/axiosInstace";
+import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
-import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 
 import styled from "styled-components";
@@ -11,23 +11,6 @@ const SummonerPage = () => {
   const params = useParams();
   const id = params.id;
 
-  // const fetchData = async () => {
-  //   const res = await axiosInstance.get(`/summoner?input=${id}`);
-  //   return res.data;
-  // };
-
-  // const { data, isLoading, error } = useQuery({
-  //   queryKey: ["summonerData"],
-  //   queryFn: () => fetchData(id),
-  // });
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (error) {
-  //   return <div>Error: {error.message}</div>;
-  // }
   const { data, isLoading, error } = useSummonuerQuery(id);
 
   if (isLoading) {
@@ -41,6 +24,10 @@ const SummonerPage = () => {
   const summonerName = data?.result[0]?.name;
   const tier = data?.result;
   const tag = data?.result[0]?.tag;
+  const profileIconId = data?.result[0]?.profileIconId;
+
+  const profileIcon = PROFILE_ICON_URL(profileIconId);
+
   console.log(tag);
   console.log(tier);
   console.log(summonerName);
@@ -49,6 +36,9 @@ const SummonerPage = () => {
     <S.Wrapper>
       <S.Container>
         :)
+        <Image src={profileIcon} width={50} height={50} alt="profile" />
+        <div>{summonerName}</div>
+        <div>{tag}</div>
         <div>{/* user profile */}</div>
         <div>{/* tier card */}</div>
         <div>{/* match */}</div>
