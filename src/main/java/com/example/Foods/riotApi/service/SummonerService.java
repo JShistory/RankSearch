@@ -16,8 +16,8 @@ public class SummonerService {
 
     @Transactional
     public Long saveUser(Summoner summoner, String tag, String name) {
-        summoner.setPrevId(summoner.getName());
-        summoner.setName(name);
+//        summoner.setPrevId(summoner.getName());
+//        summoner.setName(name);
         summoner.setTag(tag);
         riotRepository.save(summoner);
         return summoner.getDataId();
@@ -37,11 +37,6 @@ public class SummonerService {
 
     public List<Summoner> findAll(){
         return riotRepository.findAll();
-    }
-
-    @Transactional
-    public void deleteSummoner(Summoner summoner){
-        riotRepository.delete(summoner);
     }
 
 }
