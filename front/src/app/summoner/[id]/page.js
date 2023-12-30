@@ -1,6 +1,7 @@
 "use client";
 
 import { axiosInstance } from "@/apis/axiosInstace";
+import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
@@ -10,15 +11,24 @@ const SummonerPage = () => {
   const params = useParams();
   const id = params.id;
 
-  const fetchData = async () => {
-    const res = await axiosInstance.get(`/summoner?input=${id}`);
-    return res.data;
-  };
+  // const fetchData = async () => {
+  //   const res = await axiosInstance.get(`/summoner?input=${id}`);
+  //   return res.data;
+  // };
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["summonerData"],
-    queryFn: () => fetchData(id),
-  });
+  // const { data, isLoading, error } = useQuery({
+  //   queryKey: ["summonerData"],
+  //   queryFn: () => fetchData(id),
+  // });
+
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
+  const { data, isLoading, error } = useSummonuerQuery(id);
 
   if (isLoading) {
     return <div>Loading...</div>;
