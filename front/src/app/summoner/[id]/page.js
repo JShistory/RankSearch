@@ -1,5 +1,6 @@
 "use client";
 
+import TierImageComponent from "@/components/TierImageComponent";
 import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
 import Image from "next/image";
@@ -22,7 +23,7 @@ const SummonerPage = () => {
   }
 
   const summonerName = data?.result[0]?.name;
-  const tier = data?.result;
+  const tier = data?.result[0].leagueEntries[0].tier;
   const tag = data?.result[0]?.tag;
   const profileIconId = data?.result[0]?.profileIconId;
 
@@ -37,6 +38,7 @@ const SummonerPage = () => {
       <S.Container>
         :)
         <Image src={profileIcon} width={50} height={50} alt="profile" />
+        <TierImageComponent rank={tier} />
         <div>{summonerName}</div>
         <div>{tag}</div>
         <div>{/* user profile */}</div>
