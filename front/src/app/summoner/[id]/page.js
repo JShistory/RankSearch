@@ -8,9 +8,8 @@ import styled from "styled-components";
 
 const SummonerPage = () => {
   const params = useParams();
-  let id = params.id;
+  const id = params.id;
 
-  console.log(id);
   const fetchData = async () => {
     const res = await axiosInstance.get(`/summoner?input=${id}`);
     return res.data;
@@ -29,11 +28,10 @@ const SummonerPage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  let summonerName = data?.result[0]?.name;
-
+  const summonerName = data?.result[0]?.name;
   const tier = data?.result;
   const tag = data?.result[0]?.tag;
-  // console.log(tag);
+  console.log(tag);
   console.log(tier);
   console.log(summonerName);
 
