@@ -23,7 +23,7 @@ const SummonerPage = () => {
   }
 
   const summonerName = data?.result[0]?.name;
-  const tier = data?.result[0].leagueEntries[0].tier;
+  const tier = data?.result[0].leagueEntries[0]?.tier;
   const tag = data?.result[0]?.tag;
   const profileIconId = data?.result[0]?.profileIconId;
 

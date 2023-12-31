@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 
 const TierImageComponent = ({ rank }) => {
-  const rankImage = `${rank}.png`;
+  const rankImage = rank ? `${rank}.png` : "Unranked.png";
 
   return (
     <div>
