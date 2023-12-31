@@ -26,10 +26,10 @@ public class GameInfo {
     private Long gameCreation;
     private Long gameDuration;
     private Long gameEndTimestamp;
+    private Long gameStartTimestamp;
     private Long gameId;
     private String gameMode;
     private String gameName;
-    private Long gameStartTimestamp;
     private String gameType;
     private String gameVersion;
     private int mapId;
