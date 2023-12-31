@@ -37,3 +37,4 @@ out/
 .vscode/
 application.properties
 MyServerKeyPair.pem
+application.yml

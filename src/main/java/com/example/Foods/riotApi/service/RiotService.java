@@ -10,6 +10,7 @@ import com.example.Foods.riotApi.entity.MetaData;
 import com.example.Foods.riotApi.entity.MetaDataDTO;
 import com.example.Foods.riotApi.entity.Participant;
 import com.example.Foods.riotApi.entity.ParticipantDto;
+import com.example.Foods.riotApi.entity.SpellType;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.repository.LeagueEntryRepository;
 import com.fasterxml.jackson.core.JsonParser;
@@ -491,8 +492,14 @@ public class RiotService {
                 int champLevel = Integer.valueOf(participantsData.get("champLevel").toString());
                 int championId = Integer.valueOf(participantsData.get("championId").toString());
                 int teamId = Integer.valueOf(participantsData.get("teamId").toString());
-                int spell1Casts = Integer.valueOf(participantsData.get("spell1Casts").toString());
-                int spell2Casts = Integer.valueOf(participantsData.get("spell2Casts").toString());
+                int qCount = Integer.valueOf(participantsData.get("spell1Casts").toString());
+                int wCount = Integer.valueOf(participantsData.get("spell2Casts").toString());
+                int eCount = Integer.valueOf(participantsData.get("spell3Casts").toString());
+                int rCount = Integer.valueOf(participantsData.get("spell4Casts").toString());
+                int dCount = Integer.valueOf(participantsData.get("summoner1Casts").toString());
+                int fCount = Integer.valueOf(participantsData.get("summoner2Casts").toString());
+                int dSpell = Integer.valueOf(participantsData.get("summoner1Id").toString());
+                int fSpell = Integer.valueOf(participantsData.get("summoner2Id").toString());
                 int item0 = Integer.valueOf(participantsData.get("item0").toString());
                 int item1 = Integer.valueOf(participantsData.get("item1").toString());
                 int item2 = Integer.valueOf(participantsData.get("item2").toString());
@@ -509,6 +516,17 @@ public class RiotService {
                 boolean win = (boolean) participantsData.get("win");
                 String summonerName = participantsData.get("summonerName").toString();
                 String championName = participantsData.get("championName").toString();
+                SpellType dSpellType;
+                SpellType fSpellType;
+                try {
+                    dSpellType = SpellType.fromNumericValue(dSpell);
+                    fSpellType = SpellType.fromNumericValue(fSpell);
+                }catch(IllegalArgumentException e){
+                    dSpellType = SpellType.Null;
+                    fSpellType = SpellType.Null;
+                }
+
+
                 participantData = Participant.builder()
                         .item0(item0)
                         .item1(item1)
@@ -524,8 +542,12 @@ public class RiotService {
                         .champLevel(champLevel)
                         .championName(championName)
                         .goldEarned(goldEarned)
-                        .spell1Casts(spell1Casts)
-                        .spell2Casts(spell2Casts)
+                        .qCount(qCount)
+                        .wCount(wCount)
+                        .eCount(eCount)
+                        .rCount(rCount)
+                        .dCount(dCount)
+                        .fCount(fCount)
                         .win(win)
                         .teamId(teamId)
                         .goldSpent(goldEarned)
@@ -534,6 +556,8 @@ public class RiotService {
                         .totalMinionsKilled(totalMinionsKilled)
                         .wardsKilled(wardsKilled)
                         .wardsPlaced(wardsPlaced)
+                        .dSpellName(dSpellType.name())
+                        .fSpellName(fSpellType.name())
                         .build();
 
                 participant.add(participantData);

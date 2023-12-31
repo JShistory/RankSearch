@@ -2,8 +2,6 @@ package com.example.Foods.riotApi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,8 +12,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
@@ -33,8 +29,15 @@ public class Participant {
     private int champLevel;
     private int championId;
     private int teamId;
-    private int spell1Casts;
-    private int spell2Casts;
+    private int qCount;
+    private int wCount;
+    private int eCount;
+    private int rCount;
+
+    private String dSpellName;
+    private String fSpellName;
+    private int dCount;
+    private int fCount;
     //아이템
     private int item0;
     private int item1;

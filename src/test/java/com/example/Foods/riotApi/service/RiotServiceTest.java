@@ -34,7 +34,7 @@ public class RiotServiceTest {
     @Test
     public void 중복소환사() throws Exception {
         //given
-        String input = "괴물쥐-고라파덕";
+        String input = "1Byte";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
         Summoner summoner2 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
