@@ -59,4 +59,5 @@ public class LeagueEntryService {
     public List<LeagueEntry> findAll() {
         return leagueEntryRepository.findAll();
     }
+
 }

@@ -19,6 +19,7 @@ public class SummonerService {
 //        summoner.setPrevId(summoner.getName());
 //        summoner.setName(name);
         summoner.setTag(tag);
+        summoner.setFindName(summoner.getName().toLowerCase().replaceAll(" ",""));
         riotRepository.save(summoner);
         return summoner.getDataId();
     }
@@ -27,8 +28,11 @@ public class SummonerService {
         return riotRepository.findByName(name);
     }
 
-    public Summoner findByNameAndTag(String summonerName, String tag) {
-        return riotRepository.findByNameAndTag(summonerName, tag);
+    public Summoner findByNameAndTag(String name, String tag) {
+        return riotRepository.findByNameAndTag(name, tag);
+    }
+    public Summoner findByFindNameAndTag(String name, String tag) {
+        return riotRepository.findByFindNameAndTag(name.toLowerCase().replaceAll(" ",""), tag);
     }
 
     public Summoner findById(Long id) {

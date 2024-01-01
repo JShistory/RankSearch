@@ -548,6 +548,8 @@ public class RiotService {
                         .rCount(rCount)
                         .dCount(dCount)
                         .fCount(fCount)
+                        .dSpell(dSpellType)
+                        .fSpell(fSpellType)
                         .win(win)
                         .teamId(teamId)
                         .goldSpent(goldEarned)
@@ -556,8 +558,6 @@ public class RiotService {
                         .totalMinionsKilled(totalMinionsKilled)
                         .wardsKilled(wardsKilled)
                         .wardsPlaced(wardsPlaced)
-                        .dSpellName(dSpellType.name())
-                        .fSpellName(fSpellType.name())
                         .build();
 
                 participant.add(participantData);
