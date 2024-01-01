@@ -72,9 +72,11 @@ public class RiotApiController {
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
 
-        Summoner summoner = summonerService.findByNameAndTag(name, tag);
-        if (summoner == null) {
+        Summoner summoner = summonerService.findByFindNameAndTag(name, tag);
+        Summoner checkSummoner = riotService.loadUserWithTag(name, tag);
+        if (summoner == null && checkSummoner != null) {
             ResponseEntity<BasicResponse> entity = saveSummoner(input);
+
             if (entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
                 basicResponse = entity.getBody();
 
@@ -89,6 +91,22 @@ public class RiotApiController {
                         .build();
             }
         } else {
+            LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
+            LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
+            LeagueEntry flex = null;
+            LeagueEntry solo = null;
+            if (soloLeagueEntryDTO != null) {
+                Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
+                solo = leagueEntryService.findById(soloRankId);
+            }
+
+            if (flexLeagueEntryDTO != null) {
+                Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
+                flex = leagueEntryService.findById(flexRankId);
+            }
+            summoner.putLeagueData(solo);
+            summoner.putLeagueData(flex);
+
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
@@ -101,14 +119,16 @@ public class RiotApiController {
         return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
     }
 
+
     @PostMapping("/summoner")
     public ResponseEntity<BasicResponse> saveSummoner(String input) {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
+        Summoner summoner;
 
-        Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         if (summoner == null) {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
@@ -119,70 +139,101 @@ public class RiotApiController {
                     .build();
             return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
         }
-        Long saveUserId = summonerService.saveUser(summoner, tag, name);
 
-        //솔로랭크, 자유랭크 정보 저장
-        LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
-        LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
-        LeagueEntry flex = null;
-        LeagueEntry solo = null;
-        if (soloLeagueEntryDTO != null) {
-            Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
-            solo = leagueEntryService.findById(soloRankId);
-        }
-
-        if (flexLeagueEntryDTO != null) {
-            Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
-            flex = leagueEntryService.findById(flexRankId);
-        }
-        summoner.putLeagueData(solo);
-        summoner.putLeagueData(flex);
-        //최근 5개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 5);
-        GameInfo gameInfo;
-        MetaData metaData;
-        for (String game : gameList) {
-            List<MatchData> matchDataList = summoner.getMatchData();
-            boolean isContains = false;
-            for (MatchData matches : matchDataList) {
-                if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(
-                        game.split("_")[1])) {
-                    isContains = true;
-                    break;
-                }
-            }
-            if (isContains) {
-                continue;
-            }
-            gameInfo = riotService.loadGameInfo(game);
-            metaData = riotService.loadMetaDataInfo(game);
-            gameInfoService.saveGameInfo(gameInfo);
-            metaDataService.saveMetaData(metaData);
-
-            Long matchId = matchService.saveMatch(summoner, gameInfo, metaData);
-            MatchData matchData = matchService.findById(matchId);
-            gameInfo.putMatch(matchData);
-            metaData.putMatch(matchData);
-
-            List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
-            for (Participant data : participantList) {
-                Long savedParticipant = participantService.saveParticipant(data, gameInfo);
-                Participant participantServiceById = participantService.findById(savedParticipant);
-                gameInfo.putParticipants(participantServiceById);
-            }
-
-            summoner.putGameData(matchData);
-        }
-
-        basicResponse = BasicResponse.builder()
-                .code(HttpStatus.OK.value())
-                .httpStatus(HttpStatus.OK)
-                .message("소환사 저장 성공")
-                .result(List.of(summoner))
-                .count(1)
-                .build();
-
-        return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+        Summoner checkSummoner = summonerService.findByFindNameAndTag(name, tag);
+        if (checkSummoner == null) {
+            Long saveUserId = summonerService.saveUser(summoner, tag, name);
+        } else {
+            summoner = checkSummoner;
 
     }
+
+    //솔로랭크, 자유랭크 정보 저장
+    LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
+    LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
+    LeagueEntry flex = null;
+    LeagueEntry solo = null;
+        if(soloLeagueEntryDTO !=null)
+
+    {
+        Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
+        solo = leagueEntryService.findById(soloRankId);
+    }
+
+        if(flexLeagueEntryDTO !=null)
+
+    {
+        Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
+        flex = leagueEntryService.findById(flexRankId);
+    }
+        summoner.putLeagueData(solo);
+        summoner.putLeagueData(flex);
+    //최근 20개의 게임을 불러옴
+    List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 20);
+    GameInfo gameInfo;
+    MetaData metaData;
+        for(
+    String game :gameList)
+
+    {
+        List<MatchData> matchDataList = summoner.getMatchData();
+        boolean isContains = false;
+        for (MatchData matches : matchDataList) {
+            if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(
+                    game.split("_")[1])) {
+                isContains = true;
+                break;
+            }
+        }
+        if (isContains) {
+            continue;
+        }
+        gameInfo = riotService.loadGameInfo(game);
+        metaData = riotService.loadMetaDataInfo(game);
+        gameInfoService.saveGameInfo(gameInfo);
+        metaDataService.saveMetaData(metaData);
+
+        Long matchId = matchService.saveMatch(summoner, gameInfo, metaData);
+        MatchData matchData = matchService.findById(matchId);
+        gameInfo.putMatch(matchData);
+        metaData.putMatch(matchData);
+
+        List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
+        for (Participant data : participantList) {
+            Long savedParticipant = participantService.saveParticipant(data, gameInfo);
+            Participant participantServiceById = participantService.findById(savedParticipant);
+            gameInfo.putParticipants(participantServiceById);
+        }
+
+        summoner.putGameData(matchData);
+    }
+
+    basicResponse =BasicResponse.builder()
+            .
+
+    code(HttpStatus.OK.value())
+            .
+
+    httpStatus(HttpStatus.OK)
+                .
+
+    message("소환사 저장 성공")
+                .
+
+    result(List.of(summoner))
+            .
+
+    count(1)
+                .
+
+    build();
+
+        return new ResponseEntity<>(basicResponse,basicResponse.getHttpStatus());
+
+}
+
+//    @PostMapping("/summoner")
+//    public ResponseEntity<BasicResponse> reload(){
+//
+//    }
 }

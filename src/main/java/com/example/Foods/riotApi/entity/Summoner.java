@@ -34,6 +34,7 @@ public class Summoner {
     @Column(name = "tag")
     private String tag;
     private String prevId;
+    private String findName;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY)

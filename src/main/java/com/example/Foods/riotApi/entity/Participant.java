@@ -3,6 +3,8 @@ package com.example.Foods.riotApi.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,9 +35,9 @@ public class Participant {
     private int wCount;
     private int eCount;
     private int rCount;
-
-    private String dSpellName;
-    private String fSpellName;
+    @Enumerated(EnumType.STRING)
+    private SpellType dSpell;
+    private SpellType fSpell;
     private int dCount;
     private int fCount;
     //아이템
