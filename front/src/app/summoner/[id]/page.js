@@ -1,6 +1,7 @@
 "use client";
 
 import TierImageComponent from "@/components/TierImageComponent";
+import UserInfo from "@/components/UserInfo";
 import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
 import Image from "next/image";
@@ -21,11 +22,16 @@ const SummonerPage = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+  /**
+   * profile, nickname, tag, solorank tier, freerank tier,
+   */
 
   const summonerName = data?.result[0]?.name;
   const tier = data?.result[0].leagueEntries[0]?.tier;
   const tag = data?.result[0]?.tag;
   const profileIconId = data?.result[0]?.profileIconId;
+  const summonerLevel = data?.result[0]?.summonerLevel;
+  const prevId = data?.result[0]?.prevId;
 
   const profileIcon = PROFILE_ICON_URL(profileIconId);
 
@@ -36,12 +42,14 @@ const SummonerPage = () => {
   return (
     <S.Wrapper>
       <S.Container>
-        :)
-        <Image src={profileIcon} width={50} height={50} alt="profile" />
+        <UserInfo
+          profileIcon={profileIcon}
+          summonerName={summonerName}
+          summonerLevel={summonerLevel}
+          tag={tag}
+          prevId={prevId}
+        />
         <TierImageComponent rank={tier} />
-        <div>{summonerName}</div>
-        <div>{tag}</div>
-        <div>{/* user profile */}</div>
         <div>{/* tier card */}</div>
         <div>{/* match */}</div>
       </S.Container>
