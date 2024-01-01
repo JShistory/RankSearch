@@ -23,12 +23,31 @@ const SummonerPage = () => {
   }
 
   const summonerName = data?.result[0]?.name;
-  const tier = data?.result[0].leagueEntries[0]?.tier;
-  const Tier = data?.result[0].leagueEntries[1]?.tier;
   const tag = data?.result[0]?.tag;
   const profileIconId = data?.result[0]?.profileIconId;
   const summonerLevel = data?.result[0]?.summonerLevel;
   const prevId = data?.result[0]?.prevId;
+
+  const soloRank = data?.result[0].leagueEntries[0]?.tier;
+  const freeRank = data?.result[0].leagueEntries[1]?.tier;
+
+  const soloTier = data?.result[0].leagueEntries[0]?.rank;
+  const freeTier = data?.result[0].leagueEntries[1]?.rank;
+
+  const soloLeaguePoint = data?.result[0].leagueEntries[0]?.leaguePoints;
+  const freeLeaguePoint = data?.result[0].leagueEntries[1]?.leaguePoints;
+
+  const soloRankWin = data?.result[0].leagueEntries[0]?.wins || 0;
+  const soloRankLosses = data?.result[0].leagueEntries[0]?.losses || 0;
+  const freeRankWin = data?.result[0].leagueEntries[1]?.wins || 0;
+  const freeRankLosses = data?.result[0].leagueEntries[1]?.losses || 0;
+
+  const totalSoloRankGames = soloRankWin + soloRankLosses;
+
+  // console.log(totalSoloRankGames);
+
+  const totalFreeRankGames = freeRankWin + freeRankLosses;
+  // console.log(totalFreeRankGames);
 
   const profileIcon = PROFILE_ICON_URL(profileIconId);
 
@@ -43,8 +62,24 @@ const SummonerPage = () => {
           prevId={prevId}
         />
         <S.RankBox>
-          <TierImageComponent rank={tier} />
-          <TierImageComponent rank={Tier} />
+          <TierImageComponent
+            rank={soloRank}
+            tier={soloTier}
+            point={soloLeaguePoint}
+            win={soloRankWin}
+            loss={soloRankLosses}
+            game={totalSoloRankGames}
+            type="솔로"
+          />
+          <TierImageComponent
+            rank={freeRank}
+            tier={freeTier}
+            point={freeLeaguePoint}
+            win={freeRankWin}
+            loss={freeRankLosses}
+            game={totalFreeRankGames}
+            type="자유"
+          />
           {/* tier card */}
         </S.RankBox>
         <div>{/* match */}</div>
