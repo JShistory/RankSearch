@@ -4,7 +4,6 @@ import TierImageComponent from "@/components/TierImageComponent";
 import UserInfo from "@/components/UserInfo";
 import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 
 import styled from "styled-components";
@@ -22,22 +21,16 @@ const SummonerPage = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  /**
-   * profile, nickname, tag, solorank tier, freerank tier,
-   */
 
   const summonerName = data?.result[0]?.name;
   const tier = data?.result[0].leagueEntries[0]?.tier;
+  const Tier = data?.result[0].leagueEntries[1]?.tier;
   const tag = data?.result[0]?.tag;
   const profileIconId = data?.result[0]?.profileIconId;
   const summonerLevel = data?.result[0]?.summonerLevel;
   const prevId = data?.result[0]?.prevId;
 
   const profileIcon = PROFILE_ICON_URL(profileIconId);
-
-  console.log(tag);
-  console.log(tier);
-  console.log(summonerName);
 
   return (
     <S.Wrapper>
@@ -49,8 +42,11 @@ const SummonerPage = () => {
           tag={tag}
           prevId={prevId}
         />
-        <TierImageComponent rank={tier} />
-        <div>{/* tier card */}</div>
+        <S.RankBox>
+          <TierImageComponent rank={tier} />
+          <TierImageComponent rank={Tier} />
+          {/* tier card */}
+        </S.RankBox>
         <div>{/* match */}</div>
       </S.Container>
     </S.Wrapper>
@@ -71,4 +67,13 @@ S.Container = styled.div`
   width: 1000px;
   height: 100%;
   background-color: orange;
+`;
+
+S.RankBox = styled.div`
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: space-around;
+  background-color: yellow;
+  padding: 20px;
 `;
