@@ -5,19 +5,18 @@ import React from "react";
 import styled from "styled-components";
 
 const TierImageComponent = ({ rank, tier, point, win, loss, game, type }) => {
-  const rankImage = rank ? `${rank}.png` : "Unranked.png";
-  const leaguePoint = point ? point : 0;
+  const tierImage = tier ? `${tier}.png` : "Unranked.png";
 
   return (
     <S.RankWrapper>
       <S.RankImage>
-        <Image src={`/img/${rankImage}`} width={80} height={80} alt="rank" />
+        <Image src={`/img/${tierImage}`} width={80} height={80} alt="tier" />
       </S.RankImage>
       <S.RankContainer>
         <h2>{type} 랭크</h2>
         <S.RankInfo>
-          <span>{rank ? `등금: ${rank} ${tier}` : `등급: 배치`}</span>
-          <span>{rank ? `리그 포인트: ${leaguePoint}` : null}</span>
+          <span>{tier ? `등급: ${tier} ${rank}` : `등급: 배치`}</span>
+          <span>{tier ? `리그 포인트: ${point}` : null}</span>
           {/* <span>승급전: -</span> */}
         </S.RankInfo>
         <span>

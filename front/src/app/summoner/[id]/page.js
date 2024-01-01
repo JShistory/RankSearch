@@ -22,25 +22,35 @@ const SummonerPage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  const summonerName = data?.result[0]?.name;
-  const tag = data?.result[0]?.tag;
+  // const summonerName = data?.result[0]?.name;
+  // const tag = data?.result[0]?.tag;
+  // const prevId = data?.result[0]?.prevId;
+
+  const summoner = data?.result[0];
+
+  const { name: summonerName, tag, prevId } = summoner;
+
   const profileIconId = data?.result[0]?.profileIconId;
   const summonerLevel = data?.result[0]?.summonerLevel;
-  const prevId = data?.result[0]?.prevId;
 
-  const soloRank = data?.result[0].leagueEntries[0]?.tier;
-  const freeRank = data?.result[0].leagueEntries[1]?.tier;
+  const soloRankEntry = data?.result[0]?.leagueEntries[0] || {};
+  const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
 
-  const soloTier = data?.result[0].leagueEntries[0]?.rank;
-  const freeTier = data?.result[0].leagueEntries[1]?.rank;
+  const {
+    tier: soloRankTier,
+    rank: soloRank,
+    leaguePoints: soloLeaguePoint = 0,
+    wins: soloRankWin = 0,
+    losses: soloRankLosses = 0,
+  } = soloRankEntry;
 
-  const soloLeaguePoint = data?.result[0].leagueEntries[0]?.leaguePoints;
-  const freeLeaguePoint = data?.result[0].leagueEntries[1]?.leaguePoints;
-
-  const soloRankWin = data?.result[0].leagueEntries[0]?.wins || 0;
-  const soloRankLosses = data?.result[0].leagueEntries[0]?.losses || 0;
-  const freeRankWin = data?.result[0].leagueEntries[1]?.wins || 0;
-  const freeRankLosses = data?.result[0].leagueEntries[1]?.losses || 0;
+  const {
+    tier: freeRankTier,
+    rank: freeRank,
+    leaguePoints: freeLeaguePoint = 0,
+    wins: freeRankWin = 0,
+    losses: freeRankLosses = 0,
+  } = freeRankEntry;
 
   const totalSoloRankGames = soloRankWin + soloRankLosses;
 
@@ -61,10 +71,11 @@ const SummonerPage = () => {
           tag={tag}
           prevId={prevId}
         />
+
         <S.RankBox>
           <TierImageComponent
             rank={soloRank}
-            tier={soloTier}
+            tier={soloRankTier}
             point={soloLeaguePoint}
             win={soloRankWin}
             loss={soloRankLosses}
@@ -73,14 +84,13 @@ const SummonerPage = () => {
           />
           <TierImageComponent
             rank={freeRank}
-            tier={freeTier}
+            tier={freeRankTier}
             point={freeLeaguePoint}
             win={freeRankWin}
             loss={freeRankLosses}
             game={totalFreeRankGames}
             type="자유"
           />
-          {/* tier card */}
         </S.RankBox>
         <div>{/* match */}</div>
       </S.Container>
@@ -106,7 +116,7 @@ S.Container = styled.div`
 
 S.RankBox = styled.div`
   width: 100%;
-  height: 300px;
+  height: 180px;
   display: flex;
   justify-content: space-around;
   background-color: yellow;
