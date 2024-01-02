@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
 
-const TierImageComponent = ({ rank, tier, point, win, loss, game, type }) => {
+const RankTier = ({ rank, tier, point, win, loss, game, type }) => {
   const tierImage = tier ? `${tier}.png` : "Unranked.png";
 
   return (
@@ -27,7 +27,7 @@ const TierImageComponent = ({ rank, tier, point, win, loss, game, type }) => {
   );
 };
 
-export default TierImageComponent;
+export default RankTier;
 
 const S = {};
 
@@ -37,11 +37,12 @@ S.RankWrapper = styled.div`
   border: 1px solid #000;
   display: flex;
   align-items: center;
+  background-color: #fff;
 `;
 
 S.RankImage = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   display: flex;
   justify-content: center;
   /* background-color: red; */
@@ -52,9 +53,11 @@ S.RankContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 14px;
 `;
 
 S.RankInfo = styled.div`
   display: flex;
   flex-direction: column;
+  font-size: 14px;
 `;

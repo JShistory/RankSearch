@@ -1,7 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
-import TierImageComponent from "./TierImageComponent";
+import RankTier from "./RankTier";
+import TierImageComponent from "./RankTier";
 
 const UserInfo = ({
   profileIcon,
@@ -48,7 +49,7 @@ const UserInfo = ({
         </S.UserInfoBox>
       </S.UserInfoContainer>
       <S.RankInfo>
-        <TierImageComponent
+        <RankTier
           rank={soloRank}
           tier={soloRankTier}
           point={soloLeaguePoint}
@@ -57,7 +58,7 @@ const UserInfo = ({
           game={totalSoloRankGames}
           type="솔로"
         />
-        <TierImageComponent
+        <RankTier
           rank={freeRank}
           tier={freeRankTier}
           point={freeLeaguePoint}
@@ -78,7 +79,7 @@ const S = {};
 S.UserInfo = styled.div`
   width: 100%;
   height: 200px;
-  background-color: pink;
+  /* background-color: pink; */
   padding: 20px;
   display: flex;
   gap: 10px;
@@ -126,6 +127,8 @@ S.RenewalButton = styled.button`
   height: 30px;
   border-radius: 6px;
   cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #000;
 `;
 
 S.RankInfo = styled.div`

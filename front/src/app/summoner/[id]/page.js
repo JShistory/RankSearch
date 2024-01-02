@@ -1,6 +1,6 @@
 "use client";
 
-import TierImageComponent from "@/components/TierImageComponent";
+import TierImageComponent from "@/components/RankTier";
 import UserInfo from "@/components/UserInfo";
 import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
@@ -21,10 +21,6 @@ const SummonerPage = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
-  // const summonerName = data?.result[0]?.name;
-  // const tag = data?.result[0]?.tag;
-  // const prevId = data?.result[0]?.prevId;
 
   const summoner = data?.result[0];
 
@@ -112,14 +108,14 @@ S.Wrapper = styled.div`
 S.Container = styled.div`
   width: 1000px;
   height: 100%;
-  background-color: orange;
+  background-color: #eee;
 `;
 
-S.RankBox = styled.div`
-  width: 100%;
-  height: 180px;
-  display: flex;
-  justify-content: space-around;
-  background-color: yellow;
-  padding: 20px;
-`;
+// S.RankBox = styled.div`
+//   width: 100%;
+//   height: 180px;
+//   display: flex;
+//   justify-content: space-around;
+//   background-color: yellow;
+//   padding: 20px;
+// `;
