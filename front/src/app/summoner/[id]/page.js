@@ -36,27 +36,27 @@ const SummonerPage = () => {
   const soloRankEntry = data?.result[0]?.leagueEntries[0] || {};
   const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
 
-  const {
-    tier: soloRankTier,
-    rank: soloRank,
-    leaguePoints: soloLeaguePoint = 0,
-    wins: soloRankWin = 0,
-    losses: soloRankLosses = 0,
-  } = soloRankEntry;
+  // const {
+  //   tier: soloRankTier,
+  //   rank: soloRank,
+  //   leaguePoints: soloLeaguePoint = 0,
+  //   wins: soloRankWin = 0,
+  //   losses: soloRankLosses = 0,
+  // } = soloRankEntry;
 
-  const {
-    tier: freeRankTier,
-    rank: freeRank,
-    leaguePoints: freeLeaguePoint = 0,
-    wins: freeRankWin = 0,
-    losses: freeRankLosses = 0,
-  } = freeRankEntry;
+  // const {
+  //   tier: freeRankTier,
+  //   rank: freeRank,
+  //   leaguePoints: freeLeaguePoint = 0,
+  //   wins: freeRankWin = 0,
+  //   losses: freeRankLosses = 0,
+  // } = freeRankEntry;
 
-  const totalSoloRankGames = soloRankWin + soloRankLosses;
+  // const totalSoloRankGames = soloRankWin + soloRankLosses;
 
+  // const totalFreeRankGames = freeRankWin + freeRankLosses;
   // console.log(totalSoloRankGames);
 
-  const totalFreeRankGames = freeRankWin + freeRankLosses;
   // console.log(totalFreeRankGames);
 
   const profileIcon = PROFILE_ICON_URL(profileIconId);
@@ -70,9 +70,10 @@ const SummonerPage = () => {
           summonerLevel={summonerLevel}
           tag={tag}
           prevId={prevId}
+          rankEntry={{ soloRankEntry, freeRankEntry }}
         />
 
-        <S.RankBox>
+        {/* <S.RankBox>
           <TierImageComponent
             rank={soloRank}
             tier={soloRankTier}
@@ -91,7 +92,7 @@ const SummonerPage = () => {
             game={totalFreeRankGames}
             type="자유"
           />
-        </S.RankBox>
+        </S.RankBox> */}
         <div>{/* match */}</div>
       </S.Container>
     </S.Wrapper>

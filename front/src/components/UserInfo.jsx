@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
+import TierImageComponent from "./TierImageComponent";
 
 const UserInfo = ({
   profileIcon,
@@ -8,7 +9,29 @@ const UserInfo = ({
   summonerLevel,
   tag,
   prevId,
+  rankEntry,
 }) => {
+  const { soloRankEntry, freeRankEntry } = rankEntry;
+  const {
+    tier: soloRankTier,
+    rank: soloRank,
+    leaguePoints: soloLeaguePoint = 0,
+    wins: soloRankWin = 0,
+    losses: soloRankLosses = 0,
+  } = soloRankEntry;
+
+  const {
+    tier: freeRankTier,
+    rank: freeRank,
+    leaguePoints: freeLeaguePoint = 0,
+    wins: freeRankWin = 0,
+    losses: freeRankLosses = 0,
+  } = freeRankEntry;
+
+  const totalSoloRankGames = soloRankWin + soloRankLosses;
+
+  const totalFreeRankGames = freeRankWin + freeRankLosses;
+
   return (
     <S.UserInfo>
       {/* user profile */}
@@ -24,6 +47,26 @@ const UserInfo = ({
           <S.RenewalButton>전적 갱신</S.RenewalButton>
         </S.UserInfoBox>
       </S.UserInfoContainer>
+      <S.RankInfo>
+        <TierImageComponent
+          rank={soloRank}
+          tier={soloRankTier}
+          point={soloLeaguePoint}
+          win={soloRankWin}
+          loss={soloRankLosses}
+          game={totalSoloRankGames}
+          type="솔로"
+        />
+        <TierImageComponent
+          rank={freeRank}
+          tier={freeRankTier}
+          point={freeLeaguePoint}
+          win={freeRankWin}
+          loss={freeRankLosses}
+          game={totalFreeRankGames}
+          type="자유"
+        />
+      </S.RankInfo>
     </S.UserInfo>
   );
 };
@@ -83,4 +126,9 @@ S.RenewalButton = styled.button`
   height: 30px;
   border-radius: 6px;
   cursor: pointer;
+`;
+
+S.RankInfo = styled.div`
+  display: flex;
+  gap: 5px;
 `;

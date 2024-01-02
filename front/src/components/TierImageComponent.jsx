@@ -32,7 +32,7 @@ export default TierImageComponent;
 const S = {};
 
 S.RankWrapper = styled.div`
-  width: 360px;
+  width: 250px;
   height: 120px;
   border: 1px solid #000;
   display: flex;
