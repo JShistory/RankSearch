@@ -17,8 +17,12 @@ public class ParticipantDto {
     private int champLevel;
     private int championId;
     private int teamId;
-    private int spell1Casts;
-    private int spell2Casts;
+    private int qCount;
+    private int wCount;
+    private int eCount;
+    private int rCount;
+    private int dSpell;
+    private int fSpell;
     //아이템
     private int item0;
     private int item1;
@@ -37,5 +41,8 @@ public class ParticipantDto {
     private boolean win;
     private int totalMinionsKilled;
     private int visionScore;
+    private SpellType spell;
+
+
 
 }

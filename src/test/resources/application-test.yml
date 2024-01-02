@@ -1,8 +1,5 @@
 spring:
   #MySQL
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://database-1.cv62q26aqh6r.ap-northeast-2.rds.amazonaws.com:3306/RankSearchLocal?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -11,12 +8,11 @@ spring:
 
   #JPA
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    #database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        globally_quoted_identifiers: true
         format_sql: true
         show_sql: true
         highlight_sql: true
