@@ -1,14 +1,9 @@
 import timeHelper from "@/util/time-hleper";
 import React from "react";
+import styled from "styled-components";
 
 const GameCard = ({ gameInfo, summonerName }) => {
-  const {
-    participants,
-    gameStartTimestamp,
-    gameEndTimestamp,
-    gameCreation,
-    gameDuration,
-  } = gameInfo;
+  const { participants, gameCreation, gameDuration, gameMode } = gameInfo;
   const date = timeHelper(gameCreation);
 
   const minute = Math.floor(gameDuration / 60);
@@ -25,10 +20,11 @@ const GameCard = ({ gameInfo, summonerName }) => {
   // 자신의 참여 정보를 가져옴
   const mySummoner = findSummoner();
   return (
-    <div>
+    <S.Wrapper>
       {mySummoner && (
         <div>
           내 정보:
+          <div>game mode: {gameMode}</div>
           <div>{`${minute}분 ${second}초`}</div>
           <div>gameEnd: {date}</div>
           <div>킬: {mySummoner.kills}</div>
@@ -36,8 +32,17 @@ const GameCard = ({ gameInfo, summonerName }) => {
           <div>어시스트: {mySummoner.assists}</div>
         </div>
       )}
-    </div>
+    </S.Wrapper>
   );
 };
 
 export default GameCard;
+
+const S = {};
+
+S.Wrapper = styled.div`
+  width: 100%;
+  height: 100px;
+  background-color: yellow;
+  border: 1px solid #000;
+`;

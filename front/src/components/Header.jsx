@@ -1,6 +1,5 @@
 "use client";
 
-import { PROFILE_ICON_ID } from "@/const/api";
 import React from "react";
 import styled from "styled-components";
 import SearchBar from "./SearchBar";
@@ -10,9 +9,9 @@ const Header = () => {
     <S.Wrapper>
       <S.Container>
         <S.Logo>Logo</S.Logo>
-        <div>
-          <SearchBar />
-        </div>
+        {/* <div> */}
+        <SearchBar />
+        {/* </div> */}
       </S.Container>
     </S.Wrapper>
   );
