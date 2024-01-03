@@ -13,9 +13,10 @@ const SearchBar = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    let keyword = ref.current.value.trim();
+    let keyword = ref.current.value.trim().replaceAll(" ", "+");
     keyword = keyword.replace(/#/g, "-");
-    router.push(`/summoner/${keyword}`);
+    if (keyword.includes("-")) router.push(`/summoner/${keyword}`);
+    else router.push(`/summoner/${keyword}-KR1`);
     ref.current.value = "";
   };
 

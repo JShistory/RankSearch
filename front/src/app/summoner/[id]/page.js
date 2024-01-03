@@ -1,7 +1,10 @@
 "use client";
 
-import { axiosInstance } from "@/apis/axiosInstace";
-import { useQuery } from "@tanstack/react-query";
+import TierImageComponent from "@/components/RankTier";
+import Records from "@/components/Records";
+import UserInfo from "@/components/UserInfo";
+import { PROFILE_ICON_URL } from "@/const/api";
+import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
 import { useParams } from "next/navigation";
 
 import styled from "styled-components";
@@ -9,16 +12,8 @@ import styled from "styled-components";
 const SummonerPage = () => {
   const params = useParams();
   const id = params.id;
-  // console.log(id);
-  const fetchData = async () => {
-    const res = await axiosInstance.get(`/summoner?input=${id}`);
-    return res.data;
-  };
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["summonerData"],
-    queryFn: () => fetchData(id),
-  });
+  const { data, isLoading, error } = useSummonuerQuery(id);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -28,16 +23,74 @@ const SummonerPage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  const summonerName = data?.result[0]?.name;
-  console.log(summonerName);
+  const summoner = data?.result[0];
+
+  const { name: summonerName, tag, prevId } = summoner;
+
+  const profileIconId = data?.result[0]?.profileIconId;
+  const summonerLevel = data?.result[0]?.summonerLevel;
+
+  const soloRankEntry = data?.result[0]?.leagueEntries[0] || {};
+  const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
+
+  // const {
+  //   tier: soloRankTier,
+  //   rank: soloRank,
+  //   leaguePoints: soloLeaguePoint = 0,
+  //   wins: soloRankWin = 0,
+  //   losses: soloRankLosses = 0,
+  // } = soloRankEntry;
+
+  // const {
+  //   tier: freeRankTier,
+  //   rank: freeRank,
+  //   leaguePoints: freeLeaguePoint = 0,
+  //   wins: freeRankWin = 0,
+  //   losses: freeRankLosses = 0,
+  // } = freeRankEntry;
+
+  // const totalSoloRankGames = soloRankWin + soloRankLosses;
+
+  // const totalFreeRankGames = freeRankWin + freeRankLosses;
+  // console.log(totalSoloRankGames);
+
+  // console.log(totalFreeRankGames);
+
+  const profileIcon = PROFILE_ICON_URL(profileIconId);
 
   return (
     <S.Wrapper>
       <S.Container>
-        :)
-        <div>{/* user profile */}</div>
-        <div>{/* tier card */}</div>
-        <div>{/* match */}</div>
+        <UserInfo
+          profileIcon={profileIcon}
+          summonerName={summonerName}
+          summonerLevel={summonerLevel}
+          tag={tag}
+          prevId={prevId}
+          rankEntry={{ soloRankEntry, freeRankEntry }}
+        />
+
+        {/* <S.RankBox>
+          <TierImageComponent
+            rank={soloRank}
+            tier={soloRankTier}
+            point={soloLeaguePoint}
+            win={soloRankWin}
+            loss={soloRankLosses}
+            game={totalSoloRankGames}
+            type="솔로"
+          />
+          <TierImageComponent
+            rank={freeRank}
+            tier={freeRankTier}
+            point={freeLeaguePoint}
+            win={freeRankWin}
+            loss={freeRankLosses}
+            game={totalFreeRankGames}
+            type="자유"
+          />
+        </S.RankBox> */}
+        <Records summoner={summoner} />
       </S.Container>
     </S.Wrapper>
   );
@@ -56,5 +109,14 @@ S.Wrapper = styled.div`
 S.Container = styled.div`
   width: 1000px;
   height: 100%;
-  background-color: orange;
+  background-color: #eee;
 `;
+
+// S.RankBox = styled.div`
+//   width: 100%;
+//   height: 180px;
+//   display: flex;
+//   justify-content: space-around;
+//   background-color: yellow;
+//   padding: 20px;
+// `;
