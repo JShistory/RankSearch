@@ -9,9 +9,7 @@ const Header = () => {
     <S.Wrapper>
       <S.Container>
         <S.Logo>Logo</S.Logo>
-        {/* <div> */}
         <SearchBar />
-        {/* </div> */}
       </S.Container>
     </S.Wrapper>
   );

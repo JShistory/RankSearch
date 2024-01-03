@@ -1,0 +1,17 @@
+export const spellName = {
+  방어막: "SummonerBarrier",
+  정화: "SummonerBoost",
+  점화: "SummonerDot",
+  탈진: "SummonerExhaust",
+  점멸: "SummonerFlash",
+  유체화: "SummonerHaste",
+  회복: "SummonerHeal",
+  총명: "SummonerMana",
+  "왕을 향해!": "SummonerPoroRecall",
+  "포로 던지기": "SummonerPoroThrow",
+  강타: "SummonerSmite",
+  표식: "SummonerSnowball",
+  순간이동: "SummonerTeleport",
+  "게임 시작 후 결정": "Summoner_UltBookPlaceholder",
+  "TBD 및 공격-강타": "Summoner_UltBookSmitePlaceholder",
+};
