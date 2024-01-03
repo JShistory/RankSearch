@@ -1,6 +1,7 @@
 "use client";
 
 import TierImageComponent from "@/components/RankTier";
+import Records from "@/components/Records";
 import UserInfo from "@/components/UserInfo";
 import { PROFILE_ICON_URL } from "@/const/api";
 import { useSummonuerQuery } from "@/hooks/useSummonerQuery";
@@ -89,7 +90,7 @@ const SummonerPage = () => {
             type="자유"
           />
         </S.RankBox> */}
-        <div>{/* match */}</div>
+        <Records summoner={summoner} />
       </S.Container>
     </S.Wrapper>
   );
