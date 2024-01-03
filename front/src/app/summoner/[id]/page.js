@@ -33,6 +33,8 @@ const SummonerPage = () => {
   const soloRankEntry = data?.result[0]?.leagueEntries[0] || {};
   const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
 
+  const { matchData } = summoner;
+
   // const {
   //   tier: soloRankTier,
   //   rank: soloRank,
@@ -90,7 +92,7 @@ const SummonerPage = () => {
             type="자유"
           />
         </S.RankBox> */}
-        <Records summoner={summoner} />
+        <Records matchData={matchData} summonerName={summonerName} />
       </S.Container>
     </S.Wrapper>
   );
