@@ -10,6 +10,7 @@ import {
 } from "@/const/api";
 import Image from "next/image";
 import { spellName } from "@/const/spell";
+import NonItem from "./NonItem";
 
 const GameCard = ({ gameInfo, summonerName }) => {
   const { participants, gameCreation, gameDuration, gameMode } = gameInfo;
@@ -57,23 +58,16 @@ const GameCard = ({ gameInfo, summonerName }) => {
   const myTeam = participants.filter((participant) => participant.win === win);
 
   const totalKills = myTeam.reduce((sum, team) => sum + team.kills, 0);
-  console.log(totalKills);
 
   const killInvolvement = ((kills + assists) * 100) / totalKills;
-  console.log(Math.round(killInvolvement));
 
   const kdaGrade = (kills + assists) / deaths;
 
   const myChampion = CHAMPION_IMAGE_URL(championName);
   const myDspell = SPELL_IMAGE_ID(spellName[dspell]);
   const myFspell = SPELL_IMAGE_ID(spellName[fspell]);
-  const myItem0 = ITEM_IMAGE_URL(item0);
-  const myItem1 = ITEM_IMAGE_URL(item1);
-  const myItem2 = ITEM_IMAGE_URL(item2);
-  const myItem3 = ITEM_IMAGE_URL(item3);
-  const myItem4 = ITEM_IMAGE_URL(item4);
-  const myItem5 = ITEM_IMAGE_URL(item5);
-  const myItem6 = ITEM_IMAGE_URL(item6);
+
+  const itemIds = [item0, item1, item2, item3, item4, item5, item6];
 
   return (
     <S.Wrapper>
@@ -96,12 +90,31 @@ const GameCard = ({ gameInfo, summonerName }) => {
                 <Image src={myFspell} width={36} height={36} alt="f spell" />
               </div>
             </S.ChampSpell>
-            <div>
-              <div>
-                <div>{`${kills} / ${deaths} / ${assists}`}</div>
-                <div>{`${kdaGrade.toFixed(2)} 평점`}</div>
-              </div>
-            </div>
+            <S.KdaContainer>
+              <S.KdaBox>
+                <S.Kda>{`${kills} / ${deaths} / ${assists}`}</S.Kda>
+                <S.KillRate>{`${kdaGrade.toFixed(2)} 평점`}</S.KillRate>
+                <S.killInvolvement>{`킬관여 ${Math.round(
+                  killInvolvement
+                )}%`}</S.killInvolvement>
+              </S.KdaBox>
+            </S.KdaContainer>
+            <S.ItemContainer>
+              {itemIds.map((item, index) => (
+                <div key={index}>
+                  {item !== 0 ? (
+                    <Image
+                      src={ITEM_IMAGE_URL(item)}
+                      width={36}
+                      height={36}
+                      alt="item"
+                    />
+                  ) : (
+                    <NonItem />
+                  )}
+                </div>
+              ))}
+            </S.ItemContainer>
           </S.Content>
           <div>
             <IconButton>
@@ -183,4 +196,41 @@ S.ChampLevel = styled.span`
   color: #fff;
   background: #000;
   text-align: center;
+`;
+
+S.KdaContainer = styled.div`
+  width: 100px;
+  height: 100%;
+`;
+
+S.KdaBox = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+S.Kda = styled.div`
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+S.KillRate = styled.div`
+  font-size: 16px;
+  color: #9e9eb1;
+`;
+
+S.killInvolvement = styled.div`
+  font-size: 16px;
+  color: red;
+`;
+
+S.ItemContainer = styled.div`
+  width: 180px;
+  height: 100%;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
 `;
