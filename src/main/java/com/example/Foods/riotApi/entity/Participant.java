@@ -25,11 +25,13 @@ public class Participant {
     private Long id;
 
     private int assists;
-    private String championName;
     private int deaths;
     private int kills;
+
+    private String championName;
     private int champLevel;
     private int championId;
+
     private int teamId;
     private int qCount;
     private int wCount;
@@ -37,6 +39,7 @@ public class Participant {
     private int rCount;
     @Enumerated(EnumType.STRING)
     private SpellType dSpell;
+    @Enumerated(EnumType.STRING)
     private SpellType fSpell;
     private int dCount;
     private int fCount;
