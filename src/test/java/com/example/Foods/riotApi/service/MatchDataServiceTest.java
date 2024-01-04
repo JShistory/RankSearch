@@ -49,6 +49,7 @@ public class MatchDataServiceTest {
                 .gameName(gameInfoDto.getGameName())
                 .gameStartTimestamp(gameInfoDto.getGameStartTimestamp())
                 .mapId(gameInfoDto.getMapId())
+                .queueId(gameInfoDto.getQueueId())
                 .build();
         MetaData metaData = MetaData.builder()
                 .matchId(metaDataDTO.getMatchId())

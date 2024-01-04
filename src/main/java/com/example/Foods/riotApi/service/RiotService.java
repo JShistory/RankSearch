@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.Foods.riotApi.repository.RiotRepository;
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
-import jakarta.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -52,11 +51,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RiotService {
 
     private final SummonerService summonerService;
@@ -462,7 +464,7 @@ public class RiotService {
 
     }
 
-    public List<Participant> loadParticipantsGameInfo(String matchId){
+    public List<Participant> loadParticipantsGameInfo(String matchId) {
         BufferedReader br;
         Participant participantData = null;
         List<Participant> participant = new ArrayList<>();
@@ -521,11 +523,10 @@ public class RiotService {
                 try {
                     dSpellType = SpellType.fromNumericValue(dSpell);
                     fSpellType = SpellType.fromNumericValue(fSpell);
-                }catch(IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     dSpellType = SpellType.Null;
                     fSpellType = SpellType.Null;
                 }
-
 
                 participantData = Participant.builder()
                         .item0(item0)
@@ -578,7 +579,6 @@ public class RiotService {
     public GameInfo loadGameInfo(String matchId) {
         BufferedReader br;
         GameInfo gameInfo;
-        ParticipantDto participantDto;
 
         try {
             String urlStr = matchDataUrl + matchId + "?api_key=" + riotApiKey;
@@ -606,6 +606,7 @@ public class RiotService {
             String gameType = info.get("gameType").toString();
             String gameVersion = info.get("gameVersion").toString();
             int mapId = Integer.valueOf(info.get("mapId").toString());
+            int queueId = Integer.valueOf(info.get("queueId").toString());
 
             gameInfo = GameInfo.builder()
                     .gameId(gameId)
@@ -618,6 +619,7 @@ public class RiotService {
                     .gameEndTimestamp(gameEndTimestamp)
                     .gameDuration(gameDuration)
                     .mapId(mapId)
+                    .queueId(queueId)
                     .build();
 
 

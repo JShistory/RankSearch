@@ -6,7 +6,7 @@ import com.example.Foods.riotApi.entity.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.repository.LeagueEntryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,6 +21,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,15 +48,15 @@ public class LeagueEntryService {
         leagueEntryRepository.save(leagueEntry);
         return leagueEntry.getId();
     }
-
+    @Transactional(readOnly = true)
     public LeagueEntry findById(Long id) {
         return leagueEntryRepository.findById(id).get();
     }
-
+    @Transactional(readOnly = true)
     public List<LeagueEntry> findBySummoner(Summoner summoner) {
         return leagueEntryRepository.findBySummoner(summoner);
     }
-
+    @Transactional(readOnly = true)
     public List<LeagueEntry> findAll() {
         return leagueEntryRepository.findAll();
     }
