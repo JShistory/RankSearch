@@ -44,7 +44,7 @@ public class GameInfo {
 
     @Builder
     public GameInfo(Long gameCreation, Long gameDuration, Long gameEndTimestamp, Long gameId, String gameMode, String gameName, Long gameStartTimestamp, String gameType
-    ,String gameVersion, int mapId){
+    ,String gameVersion, int mapId, int queueId){
         this.gameCreation = gameCreation;
         this.gameDuration = gameDuration;
         this.gameEndTimestamp =  gameEndTimestamp;
@@ -55,6 +55,7 @@ public class GameInfo {
         this.gameType = gameType;
         this.gameVersion = gameVersion;
         this.mapId = mapId;
+        this.queueId = queueId;
     }
 
     public GameInfo() {
@@ -64,6 +65,9 @@ public class GameInfo {
         this.matchData = matchData;
     }
     public void putParticipants(Participant participant){
+        while(participants.size() > 20){
+            participants.remove(0);
+        }
         this.participants.add(participant);
     }
 }

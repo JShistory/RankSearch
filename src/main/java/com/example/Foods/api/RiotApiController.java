@@ -15,13 +15,13 @@ import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.ParticipantService;
 import com.example.Foods.riotApi.service.RiotService;
 import com.example.Foods.riotApi.service.SummonerService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -142,95 +142,75 @@ public class RiotApiController {
 
         Summoner checkSummoner = summonerService.findByFindNameAndTag(name, tag);
         if (checkSummoner == null) {
-            Long saveUserId = summonerService.saveUser(summoner, tag, name);
+            summonerService.saveUser(summoner, tag, name);
         } else {
             summoner = checkSummoner;
+        }
 
-    }
+        //솔로랭크, 자유랭크 정보 저장
+        LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
+        LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
+        LeagueEntry flex = null;
+        LeagueEntry solo = null;
+        if (soloLeagueEntryDTO != null) {
+            Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
+            solo = leagueEntryService.findById(soloRankId);
+        }
 
-    //솔로랭크, 자유랭크 정보 저장
-    LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
-    LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
-    LeagueEntry flex = null;
-    LeagueEntry solo = null;
-        if(soloLeagueEntryDTO !=null)
-
-    {
-        Long soloRankId = leagueEntryService.saveRank(summoner, soloLeagueEntryDTO);
-        solo = leagueEntryService.findById(soloRankId);
-    }
-
-        if(flexLeagueEntryDTO !=null)
-
-    {
-        Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
-        flex = leagueEntryService.findById(flexRankId);
-    }
+        if (flexLeagueEntryDTO != null) {
+            Long flexRankId = leagueEntryService.saveRank(summoner, flexLeagueEntryDTO);
+            flex = leagueEntryService.findById(flexRankId);
+        }
         summoner.putLeagueData(solo);
         summoner.putLeagueData(flex);
-    //최근 20개의 게임을 불러옴
-    List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 20);
-    GameInfo gameInfo;
-    MetaData metaData;
-        for(
-    String game :gameList)
 
-    {
+        //최근 20개의 게임을 불러옴
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 20);
+        GameInfo gameInfo;
+        MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
-        boolean isContains = false;
-        for (MatchData matches : matchDataList) {
-            if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(
-                    game.split("_")[1])) {
-                isContains = true;
-                break;
+        for (String game : gameList) {
+            boolean isContains = false;
+            //매치 데이터를 비교해서 이미 있는 값이면 값을 넣지 않음
+            for (MatchData matches : matchDataList) {
+                if (matches.getGameInfo().getGameId().longValue() == Long.valueOf(
+                        game.split("_")[1])) {
+                    isContains = true;
+                    break;
+                }
             }
-        }
-        if (isContains) {
-            continue;
-        }
-        gameInfo = riotService.loadGameInfo(game);
-        metaData = riotService.loadMetaDataInfo(game);
-        gameInfoService.saveGameInfo(gameInfo);
-        metaDataService.saveMetaData(metaData);
+            if (isContains) {
+                continue;
+            }
 
-        Long matchId = matchService.saveMatch(summoner, gameInfo, metaData);
-        MatchData matchData = matchService.findById(matchId);
-        gameInfo.putMatch(matchData);
-        metaData.putMatch(matchData);
+            gameInfo = riotService.loadGameInfo(game);
+            metaData = riotService.loadMetaDataInfo(game);
+            gameInfoService.saveGameInfo(gameInfo);
+            metaDataService.saveMetaData(metaData);
 
-        List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
-        for (Participant data : participantList) {
-            Long savedParticipant = participantService.saveParticipant(data, gameInfo);
-            Participant participantServiceById = participantService.findById(savedParticipant);
-            gameInfo.putParticipants(participantServiceById);
+            Long matchId = matchService.saveMatch(summoner, gameInfo, metaData);
+            MatchData matchData = matchService.findById(matchId);
+            gameInfo.putMatch(matchData);
+            metaData.putMatch(matchData);
+
+            //참가자 정보에 대한 코드
+            List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
+            List<Participant> savedParticipants = participantService.saveAll(participantList, gameInfo);
+            gameInfoService.saveAll(savedParticipants, gameInfo);
+            summoner.putGameData(matchData);
         }
 
-        summoner.putGameData(matchData);
+        basicResponse = BasicResponse.builder()
+                .code(HttpStatus.OK.value())
+                .httpStatus(HttpStatus.OK)
+                .message("소환사 저장 성공")
+                .result(List.of(summoner))
+                .count(1)
+                .build();
+
+        return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+
     }
-
-    basicResponse =BasicResponse.builder()
-            .
-
-    code(HttpStatus.OK.value())
-            .
-
-    httpStatus(HttpStatus.OK)
-                .
-
-    message("소환사 저장 성공")
-                .
-
-    result(List.of(summoner))
-            .
-
-    count(1)
-                .
-
-    build();
-
-        return new ResponseEntity<>(basicResponse,basicResponse.getHttpStatus());
-
-}
 
 //    @PostMapping("/summoner")
 //    public ResponseEntity<BasicResponse> reload(){
