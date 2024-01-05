@@ -62,6 +62,20 @@ public class Participant {
     private int totalMinionsKilled;
     private int visionScore;
 
+    private int statRuneId1;
+    private int statRuneId2;
+    private int statRuneId3;
+
+    private int mainRuneId;
+    private int mainRuneId1;
+    private int mainRuneId2;
+    private int mainRuneId3;
+    private int mainRuneId4;
+
+    private int subRuneId;
+    private int subRuneId1;
+    private int subRuneId2;
+
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "gameInfo_id")

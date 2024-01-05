@@ -1,6 +1,7 @@
 package com.example.Foods.api;
 
 import com.example.Foods.response.BasicResponse;
+import com.example.Foods.response.ErrorCode;
 import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.LeagueEntry;
 import com.example.Foods.riotApi.entity.LeagueEntryDTO;
@@ -15,17 +16,24 @@ import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.ParticipantService;
 import com.example.Foods.riotApi.service.RiotService;
 import com.example.Foods.riotApi.service.SummonerService;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,7 +58,6 @@ public class RiotApiController {
                     .httpStatus(HttpStatus.OK)
                     .message("소환사 리스트 조회 성공")
                     .result(Arrays.asList(summonerList.toArray()))
-                    .count(1)
                     .build();
         } else {
             basicResponse = BasicResponse.builder()
@@ -58,7 +65,6 @@ public class RiotApiController {
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .message("소환사를 찾을 수 없습니다.")
                     .result(Collections.emptyList())
-                    .count(0)
                     .build();
         }
         return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
@@ -66,7 +72,8 @@ public class RiotApiController {
     }
 
     @GetMapping("/summoner")
-    public ResponseEntity<BasicResponse> findSummoner(String input) {
+    public ResponseEntity<BasicResponse> findSummoner(String input)
+            throws InterruptedException, IOException, ParseException, NotFoundException {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
@@ -77,17 +84,18 @@ public class RiotApiController {
         if (summoner == null && checkSummoner != null) {
             ResponseEntity<BasicResponse> entity = saveSummoner(input);
 
+
             if (entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
                 basicResponse = entity.getBody();
+            }
 
-            } else {
+            else {
                 List<Object> result = entity.getBody().getResult();
                 basicResponse = BasicResponse.builder()
                         .code(HttpStatus.OK.value())
                         .httpStatus(HttpStatus.OK)
                         .result(result)
                         .message("소환사 찾기 성공")
-                        .count(1)
                         .build();
             }
         } else {
@@ -112,7 +120,6 @@ public class RiotApiController {
                     .httpStatus(HttpStatus.OK)
                     .result(Collections.singletonList(summoner))
                     .message("소환사 찾기 성공")
-                    .count(1)
                     .build();
         }
 
@@ -121,7 +128,8 @@ public class RiotApiController {
 
 
     @PostMapping("/summoner")
-    public ResponseEntity<BasicResponse> saveSummoner(String input) {
+    public ResponseEntity<BasicResponse> saveSummoner(String input)
+            throws InterruptedException, IOException, ParseException, NotFoundException {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
@@ -129,16 +137,7 @@ public class RiotApiController {
         Summoner summoner;
 
         summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        if (summoner == null) {
-            basicResponse = BasicResponse.builder()
-                    .code(HttpStatus.NOT_FOUND.value())
-                    .httpStatus(HttpStatus.NOT_FOUND)
-                    .message("소환사를 찾을 수 없습니다.")
-                    .result(Collections.emptyList())
-                    .count(0)
-                    .build();
-            return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
-        }
+
 
         Summoner checkSummoner = summonerService.findByFindNameAndTag(name, tag);
         if (checkSummoner == null) {
@@ -165,7 +164,7 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
 
         //최근 20개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 20);
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 10);
         GameInfo gameInfo;
         MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
@@ -195,8 +194,13 @@ public class RiotApiController {
 
             //참가자 정보에 대한 코드
             List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
-            List<Participant> savedParticipants = participantService.saveAll(participantList, gameInfo);
-            gameInfoService.saveAll(savedParticipants, gameInfo);
+            List<Participant> savedParticipants1 = participantService.saveAllV1(participantList.subList(0,participantList.size()), gameInfo);
+//            List<Participant> savedParticipants2 = participantService.saveAllV2(participantList.subList(7,15), gameInfo);
+//            List<Participant> savedParticipants3 = participantService.saveAllV3(participantList.subList(15,participantList.size()), gameInfo);
+
+            gameInfoService.saveAll(savedParticipants1, gameInfo);
+//            gameInfoService.saveAll(savedParticipants2, gameInfo);
+//            gameInfoService.saveAll(savedParticipants3, gameInfo);
             summoner.putGameData(matchData);
         }
 
@@ -205,7 +209,6 @@ public class RiotApiController {
                 .httpStatus(HttpStatus.OK)
                 .message("소환사 저장 성공")
                 .result(List.of(summoner))
-                .count(1)
                 .build();
 
         return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
@@ -216,4 +219,6 @@ public class RiotApiController {
 //    public ResponseEntity<BasicResponse> reload(){
 //
 //    }
+
+
 }

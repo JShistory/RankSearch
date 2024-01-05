@@ -12,9 +12,12 @@ import com.example.Foods.riotApi.service.MatchService;
 import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.RiotService;
 import com.example.Foods.riotApi.service.SummonerService;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +53,7 @@ public class RiotController {
     }
 
     @GetMapping("/summonerByName")
-    public String SummonerInfo(String summonerName, Model model) {
+    public String SummonerInfo(String summonerName, Model model) throws IOException, ParseException, NotFoundException {
 //        summonerName = summonerName.replaceAll(" ", "%20");
         String[] nameAndTag = riotService.splitNameAndTag(summonerName);
 

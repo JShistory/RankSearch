@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +29,7 @@ public class ParticipantService {
     }
 
     @Transactional
-    public List<Participant> saveAll(List<Participant> participant, GameInfo gameInfo){
+    public List<Participant> saveAllV1(List<Participant> participant, GameInfo gameInfo){
         List<Participant> newData = new ArrayList<>();
         for(Participant data : participant){
             data.setGameInfo(gameInfo);
@@ -37,4 +38,27 @@ public class ParticipantService {
         List<Participant> participantList = participantRepository.saveAll(newData);
         return participantList;
     }
+
+//    @Transactional
+//    @Async
+//    public List<Participant> saveAllV2(List<Participant> participant, GameInfo gameInfo){
+//        List<Participant> newData = new ArrayList<>();
+//        for(Participant data : participant){
+//            data.setGameInfo(gameInfo);
+//            newData.add(data);
+//        }
+//        List<Participant> participantList = participantRepository.saveAll(newData);
+//        return participantList;
+//    }
+//    @Transactional
+//    @Async
+//    public List<Participant> saveAllV3(List<Participant> participant, GameInfo gameInfo){
+//        List<Participant> newData = new ArrayList<>();
+//        for(Participant data : participant){
+//            data.setGameInfo(gameInfo);
+//            newData.add(data);
+//        }
+//        List<Participant> participantList = participantRepository.saveAll(newData);
+//        return participantList;
+//    }
 }
