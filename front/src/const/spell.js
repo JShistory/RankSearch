@@ -1,4 +1,4 @@
-export const spellName = {
+export const SPELL_NAMES = {
   방어막: "SummonerBarrier",
   정화: "SummonerBoost",
   점화: "SummonerDot",

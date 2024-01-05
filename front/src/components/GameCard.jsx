@@ -6,14 +6,18 @@ import { IconButton } from "@mui/material";
 import {
   CHAMPION_IMAGE_URL,
   ITEM_IMAGE_URL,
+  RUNE_IMAGE,
   SPELL_IMAGE_ID,
 } from "@/const/api";
 import Image from "next/image";
-import { spellName } from "@/const/spell";
+import { SPELL_NAMES } from "@/const/spell";
 import NonItem from "./NonItem";
+import { KO, QUEUETYPE } from "@/const/queue";
+
+import { findRuneIcon } from "@/hooks/findRuneIcon";
 
 const GameCard = ({ gameInfo, summonerName }) => {
-  const { participants, gameCreation, gameDuration, gameMode } = gameInfo;
+  const { participants, gameCreation, gameDuration, queueId } = gameInfo;
   const lastPlayDate = timeHelper(gameCreation);
 
   const minute = Math.floor(gameDuration / 60);
@@ -53,6 +57,9 @@ const GameCard = ({ gameInfo, summonerName }) => {
     item5,
     item6,
     win,
+    totalMinionsKilled,
+    mainRuneId1,
+    subRuneId,
   } = mySummoner;
 
   const myTeam = participants.filter((participant) => participant.win === win);
@@ -63,19 +70,28 @@ const GameCard = ({ gameInfo, summonerName }) => {
 
   const kdaGrade = (kills + assists) / deaths;
 
+  const gradeCs = totalMinionsKilled / minute;
+
   const myChampion = CHAMPION_IMAGE_URL(championName);
-  const myDspell = SPELL_IMAGE_ID(spellName[dspell]);
-  const myFspell = SPELL_IMAGE_ID(spellName[fspell]);
+  const myDspell = SPELL_IMAGE_ID(SPELL_NAMES[dspell]);
+  const myFspell = SPELL_IMAGE_ID(SPELL_NAMES[fspell]);
 
   const itemIds = [item0, item1, item2, item3, item4, item5, item6];
 
+  const queueType = QUEUETYPE[queueId];
+  const queue = KO[queueType];
+
+  const mainRuneIcon = findRuneIcon(mainRuneId1);
+  console.log(mainRuneIcon);
+  const runeImage = RUNE_IMAGE(mainRuneIcon);
+
   return (
-    <S.Wrapper>
+    <S.Wrapper win={win}>
       {mySummoner && (
         <S.Container>
           <S.Content>
             <S.GameMode>
-              <S.QueueType win={win}>{gameMode}</S.QueueType>
+              <S.QueueType win={win}>{queue}</S.QueueType>
               <div> {lastPlayDate}</div>
               <S.Win>{win ? "승리" : "패배"}</S.Win>
               <div>{`${minute}분 ${second}초`}</div>
@@ -89,11 +105,16 @@ const GameCard = ({ gameInfo, summonerName }) => {
                 <Image src={myDspell} width={36} height={36} alt="d spell" />
                 <Image src={myFspell} width={36} height={36} alt="f spell" />
               </div>
+              <div>
+                <Image src={runeImage} width={36} height={36} alt="d spell" />
+                <Image src={myFspell} width={36} height={36} alt="f spell" />
+              </div>
             </S.ChampSpell>
             <S.KdaContainer>
               <S.KdaBox>
                 <S.Kda>{`${kills} / ${deaths} / ${assists}`}</S.Kda>
                 <S.KillRate>{`${kdaGrade.toFixed(2)} 평점`}</S.KillRate>
+                <div>{`CS ${totalMinionsKilled}(${gradeCs.toFixed(1)})`}</div>
                 <S.killInvolvement>{`킬관여 ${Math.round(
                   killInvolvement
                 )}%`}</S.killInvolvement>
@@ -115,6 +136,7 @@ const GameCard = ({ gameInfo, summonerName }) => {
                 </div>
               ))}
             </S.ItemContainer>
+            <div></div>
           </S.Content>
           <div>
             <IconButton>
@@ -134,8 +156,8 @@ const S = {};
 S.Wrapper = styled.div`
   width: 100%;
   height: 100px;
-  background-color: yellow;
-  border: 1px solid #000;
+  background-color: ${({ win }) => (win ? "#d5e3ff" : "#ffd8d9")};
+  border: 0.2px solid #000;
 `;
 
 S.Container = styled.div`
@@ -161,7 +183,6 @@ S.GameMode = styled.div`
   font-size: 14px;
   gap: 10px;
   color: #9e9eb1;
-  background-color: white;
 `;
 
 S.QueueType = styled.div`
@@ -178,6 +199,7 @@ S.ChampSpell = styled.div`
   height: 100%;
   display: flex;
   gap: 6px;
+  width: 150px;
 `;
 
 S.Champ = styled.div`
@@ -213,17 +235,17 @@ S.KdaBox = styled.div`
 `;
 
 S.Kda = styled.div`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 `;
 
 S.KillRate = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   color: #9e9eb1;
 `;
 
 S.killInvolvement = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   color: red;
 `;
 
@@ -233,4 +255,5 @@ S.ItemContainer = styled.div`
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+  border-right: 1px solid #ccc;
 `;

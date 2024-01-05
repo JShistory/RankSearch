@@ -33,8 +33,9 @@ const S = {};
 
 S.Wrapper = styled.div`
   width: 100%;
-
-  background-color: green;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `;
 
 S.MoreBox = styled.div`

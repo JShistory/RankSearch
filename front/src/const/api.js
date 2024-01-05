@@ -18,7 +18,12 @@ export const ITEM_IMAGE_URL = (id) =>
 export const SPELL_IMAGE_ID = (id) =>
   `${IMAGE_URL}${RIOT_VERSION}/img/spell/${id}.png`;
 
+export const RUNE_IMAGE = (runeIcon) => {
+  return `https://ddragon.canisback.com/img/${runeIcon}`;
+};
+
 // https://ddragon.leagueoflegends.com/cdn/13.9.1/img/profileicon/22.png
 // https://ddragon.leagueoflegends.com/cdn/12.12.1/img/champion/Aatrox.png
 // https://ddragon.leagueoflegends.com/cdn/12.12.1/img/spell/SummonerBarrier.png
 // https://ddragon.leagueoflegends.com/cdn/13.9.1/img/item/1103.png
+// https://ddragon.leagueoflegends.com/cdn/13.9.1/img/runes/5002.png
