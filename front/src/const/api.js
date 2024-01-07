@@ -27,3 +27,4 @@ export const RUNE_IMAGE = (runeIcon) => {
 // https://ddragon.leagueoflegends.com/cdn/12.12.1/img/spell/SummonerBarrier.png
 // https://ddragon.leagueoflegends.com/cdn/13.9.1/img/item/1103.png
 // https://ddragon.leagueoflegends.com/cdn/13.9.1/img/runes/5002.png
+// https://ddragon.canisback.com/latest/data/ko_KR/runesReforged.json

@@ -14,7 +14,14 @@ import { SPELL_NAMES } from "@/const/spell";
 import NonItem from "./NonItem";
 import { KO, QUEUETYPE } from "@/const/queue";
 
-import { findRuneIcon } from "@/hooks/findRuneIcon";
+import {
+  findMainRuneIcon,
+  findRuneIcon,
+  findSubRuneIcon,
+  mainRuneIcon,
+} from "@/hooks/findRuneIcon";
+import styledEngine from "@mui/styled-engine";
+import GameTime from "./GameTime";
 
 const GameCard = ({ gameInfo, summonerName }) => {
   const { participants, gameCreation, gameDuration, queueId } = gameInfo;
@@ -33,6 +40,8 @@ const GameCard = ({ gameInfo, summonerName }) => {
   const winners = participants.filter(
     (participant) => participant.win === true
   );
+
+  console.log(winners);
 
   const losers = participants.filter(
     (participant) => participant.win === false
@@ -76,26 +85,34 @@ const GameCard = ({ gameInfo, summonerName }) => {
   const myDspell = SPELL_IMAGE_ID(SPELL_NAMES[dspell]);
   const myFspell = SPELL_IMAGE_ID(SPELL_NAMES[fspell]);
 
-  const itemIds = [item0, item1, item2, item3, item4, item5, item6];
+  const itemIds = [item0, item1, item2, item3, item4, item5];
 
   const queueType = QUEUETYPE[queueId];
   const queue = KO[queueType];
 
-  const mainRuneIcon = findRuneIcon(mainRuneId1);
-  console.log(mainRuneIcon);
-  const runeImage = RUNE_IMAGE(mainRuneIcon);
+  const mainRuneIcon = findMainRuneIcon(mainRuneId1);
+  const subRuneIcon = findSubRuneIcon(subRuneId);
+  const mainRuneImage = RUNE_IMAGE(mainRuneIcon);
+  const subRuneImage = RUNE_IMAGE(subRuneIcon);
 
   return (
     <S.Wrapper win={win}>
       {mySummoner && (
         <S.Container>
           <S.Content>
-            <S.GameMode>
+            {/* <S.GameMode>
               <S.QueueType win={win}>{queue}</S.QueueType>
               <div> {lastPlayDate}</div>
               <S.Win>{win ? "승리" : "패배"}</S.Win>
               <div>{`${minute}분 ${second}초`}</div>
-            </S.GameMode>
+            </S.GameMode> */}
+            <GameTime
+              win={win}
+              queue={queue}
+              lastPlayDate={lastPlayDate}
+              minute={minute}
+              second={second}
+            />
             <S.ChampSpell>
               <S.Champ>
                 <Image src={myChampion} width={60} height={60} alt="champion" />
@@ -106,8 +123,18 @@ const GameCard = ({ gameInfo, summonerName }) => {
                 <Image src={myFspell} width={36} height={36} alt="f spell" />
               </div>
               <div>
-                <Image src={runeImage} width={36} height={36} alt="d spell" />
-                <Image src={myFspell} width={36} height={36} alt="f spell" />
+                <Image
+                  src={mainRuneImage}
+                  width={36}
+                  height={36}
+                  alt="d spell"
+                />
+                <Image
+                  src={subRuneImage}
+                  width={36}
+                  height={36}
+                  alt="f spell"
+                />
               </div>
             </S.ChampSpell>
             <S.KdaContainer>
@@ -136,13 +163,56 @@ const GameCard = ({ gameInfo, summonerName }) => {
                 </div>
               ))}
             </S.ItemContainer>
-            <div></div>
+            <S.Item>
+              {item6 ? (
+                <Image
+                  src={ITEM_IMAGE_URL(item6)}
+                  width={36}
+                  height={36}
+                  alt="item"
+                />
+              ) : (
+                <NonItem />
+              )}
+            </S.Item>
+            <S.Team>
+              <S.TeamInfo>
+                {winners.map((winner, index) => (
+                  <S.TeamChampSummoner key={index}>
+                    <Image
+                      src={CHAMPION_IMAGE_URL(winner.championName)}
+                      width={15}
+                      height={15}
+                      alt="champ"
+                    />
+                    <S.TeamSummonerName>
+                      {winner.summonerName}
+                    </S.TeamSummonerName>
+                  </S.TeamChampSummoner>
+                ))}
+              </S.TeamInfo>
+              <S.TeamInfo>
+                {losers.map((loser, index) => (
+                  <S.TeamChampSummoner key={index}>
+                    <Image
+                      src={CHAMPION_IMAGE_URL(loser.championName)}
+                      width={15}
+                      height={15}
+                      alt="champ"
+                    />
+                    <S.TeamSummonerName>
+                      {loser.summonerName}
+                    </S.TeamSummonerName>
+                  </S.TeamChampSummoner>
+                ))}
+              </S.TeamInfo>
+            </S.Team>
           </S.Content>
-          <div>
+          <S.DropDownBtnBox>
             <IconButton>
               <KeyboardArrowDownIcon />
             </IconButton>
-          </div>
+          </S.DropDownBtnBox>
         </S.Container>
       )}
     </S.Wrapper>
@@ -174,25 +244,25 @@ S.Content = styled.div`
   gap: 10px;
 `;
 
-S.GameMode = styled.div`
-  width: 100px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  font-size: 14px;
-  gap: 10px;
-  color: #9e9eb1;
-`;
+// S.GameMode = styled.div`
+//   width: 100px;
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-around;
+//   font-size: 14px;
+//   gap: 10px;
+//   color: #9e9eb1;
+// `;
 
-S.QueueType = styled.div`
-  font-weight: 700;
-  color: ${({ win }) => (win ? "blue" : "red")};
-`;
+// S.QueueType = styled.div`
+//   font-weight: 700;
+//   color: ${({ win }) => (win ? "blue" : "red")};
+// `;
 
-S.Win = styled.div`
-  font-weight: 700;
-`;
+// S.Win = styled.div`
+//   font-weight: 700;
+// `;
 
 S.ChampSpell = styled.div`
   width: 100px;
@@ -250,10 +320,46 @@ S.killInvolvement = styled.div`
 `;
 
 S.ItemContainer = styled.div`
-  width: 180px;
+  width: 120px;
   height: 100%;
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
-  border-right: 1px solid #ccc;
+`;
+
+S.Item = styled.div`
+  padding-right: 10px;
+  border-right: 1px solid #9e9eb1;
+`;
+
+S.DropDownBtnBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`;
+
+S.Team = styled.div`
+  width: 300px;
+  height: 100%;
+  display: flex;
+`;
+
+S.TeamInfo = styled.div`
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+`;
+
+S.TeamChampSummoner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+S.TeamSummonerName = styled.span`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
 `;
