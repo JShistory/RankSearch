@@ -22,6 +22,9 @@ import {
 } from "@/hooks/findRuneIcon";
 import styledEngine from "@mui/styled-engine";
 import GameTime from "./GameTime";
+import ChampSpellRune from "./ChampSpellRune";
+import Kda from "./Kda";
+import Item from "./Item";
 
 const GameCard = ({ gameInfo, summonerName }) => {
   const { participants, gameCreation, gameDuration, queueId } = gameInfo;
@@ -40,8 +43,6 @@ const GameCard = ({ gameInfo, summonerName }) => {
   const winners = participants.filter(
     (participant) => participant.win === true
   );
-
-  console.log(winners);
 
   const losers = participants.filter(
     (participant) => participant.win === false
@@ -100,12 +101,6 @@ const GameCard = ({ gameInfo, summonerName }) => {
       {mySummoner && (
         <S.Container>
           <S.Content>
-            {/* <S.GameMode>
-              <S.QueueType win={win}>{queue}</S.QueueType>
-              <div> {lastPlayDate}</div>
-              <S.Win>{win ? "승리" : "패배"}</S.Win>
-              <div>{`${minute}분 ${second}초`}</div>
-            </S.GameMode> */}
             <GameTime
               win={win}
               queue={queue}
@@ -113,68 +108,26 @@ const GameCard = ({ gameInfo, summonerName }) => {
               minute={minute}
               second={second}
             />
-            <S.ChampSpell>
-              <S.Champ>
-                <Image src={myChampion} width={60} height={60} alt="champion" />
-                <S.ChampLevel>{champLevel}</S.ChampLevel>
-              </S.Champ>
-              <div>
-                <Image src={myDspell} width={36} height={36} alt="d spell" />
-                <Image src={myFspell} width={36} height={36} alt="f spell" />
-              </div>
-              <div>
-                <Image
-                  src={mainRuneImage}
-                  width={36}
-                  height={36}
-                  alt="d spell"
-                />
-                <Image
-                  src={subRuneImage}
-                  width={36}
-                  height={36}
-                  alt="f spell"
-                />
-              </div>
-            </S.ChampSpell>
-            <S.KdaContainer>
-              <S.KdaBox>
-                <S.Kda>{`${kills} / ${deaths} / ${assists}`}</S.Kda>
-                <S.KillRate>{`${kdaGrade.toFixed(2)} 평점`}</S.KillRate>
-                <div>{`CS ${totalMinionsKilled}(${gradeCs.toFixed(1)})`}</div>
-                <S.killInvolvement>{`킬관여 ${Math.round(
-                  killInvolvement
-                )}%`}</S.killInvolvement>
-              </S.KdaBox>
-            </S.KdaContainer>
-            <S.ItemContainer>
-              {itemIds.map((item, index) => (
-                <div key={index}>
-                  {item !== 0 ? (
-                    <Image
-                      src={ITEM_IMAGE_URL(item)}
-                      width={36}
-                      height={36}
-                      alt="item"
-                    />
-                  ) : (
-                    <NonItem />
-                  )}
-                </div>
-              ))}
-            </S.ItemContainer>
-            <S.Item>
-              {item6 ? (
-                <Image
-                  src={ITEM_IMAGE_URL(item6)}
-                  width={36}
-                  height={36}
-                  alt="item"
-                />
-              ) : (
-                <NonItem />
-              )}
-            </S.Item>
+            <ChampSpellRune
+              myChampion={myChampion}
+              champLevel={champLevel}
+              myDspell={myDspell}
+              myFspell={myFspell}
+              mainRuneImage={mainRuneImage}
+              subRuneImage={subRuneImage}
+            />
+
+            <Kda
+              kills={kills}
+              deaths={deaths}
+              assists={assists}
+              kdaGrade={kdaGrade}
+              totalMinionsKilled={totalMinionsKilled}
+              gradeCs={gradeCs}
+              killInvolvement={killInvolvement}
+            />
+
+            <Item itemIds={itemIds} item6={item6} />
             <S.Team>
               <S.TeamInfo>
                 {winners.map((winner, index) => (
@@ -242,94 +195,6 @@ S.Content = styled.div`
   padding: 10px;
   display: flex;
   gap: 10px;
-`;
-
-// S.GameMode = styled.div`
-//   width: 100px;
-//   height: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-//   font-size: 14px;
-//   gap: 10px;
-//   color: #9e9eb1;
-// `;
-
-// S.QueueType = styled.div`
-//   font-weight: 700;
-//   color: ${({ win }) => (win ? "blue" : "red")};
-// `;
-
-// S.Win = styled.div`
-//   font-weight: 700;
-// `;
-
-S.ChampSpell = styled.div`
-  width: 100px;
-  height: 100%;
-  display: flex;
-  gap: 6px;
-  width: 150px;
-`;
-
-S.Champ = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-S.ChampLevel = styled.span`
-  width: 100%;
-  height: 100%;
-  border: 1px solid #000;
-  font-size: 14px;
-  color: #fff;
-  background: #000;
-  text-align: center;
-`;
-
-S.KdaContainer = styled.div`
-  width: 100px;
-  height: 100%;
-`;
-
-S.KdaBox = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-S.Kda = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-S.KillRate = styled.div`
-  font-size: 14px;
-  color: #9e9eb1;
-`;
-
-S.killInvolvement = styled.div`
-  font-size: 14px;
-  color: red;
-`;
-
-S.ItemContainer = styled.div`
-  width: 120px;
-  height: 100%;
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-`;
-
-S.Item = styled.div`
-  padding-right: 10px;
-  border-right: 1px solid #9e9eb1;
 `;
 
 S.DropDownBtnBox = styled.div`
