@@ -23,15 +23,15 @@ public class MatchData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,optional = false)
     @JoinColumn(name = "summoner_dataId")
     @JsonBackReference
     private Summoner summoner;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,optional = false)
     @JsonManagedReference
     @JoinColumn(name = "metaData_id")
     private MetaData metaData;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,optional = false)
     @JsonManagedReference
     @JoinColumn(name = "gameInfo_id")
     private GameInfo gameInfo;

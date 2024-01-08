@@ -73,7 +73,7 @@ public class RiotApiController {
 
     @GetMapping("/summoner")
     public ResponseEntity<BasicResponse> findSummoner(String input)
-            throws InterruptedException, IOException, ParseException, NotFoundException {
+            throws IOException, ParseException {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
@@ -129,7 +129,7 @@ public class RiotApiController {
 
     @PostMapping("/summoner")
     public ResponseEntity<BasicResponse> saveSummoner(String input)
-            throws InterruptedException, IOException, ParseException, NotFoundException {
+            throws IOException, ParseException {
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
@@ -164,7 +164,7 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
 
         //최근 20개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 10);
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 13);
         GameInfo gameInfo;
         MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
