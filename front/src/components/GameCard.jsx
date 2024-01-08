@@ -3,31 +3,29 @@ import React from "react";
 import styled from "styled-components";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { IconButton } from "@mui/material";
-import {
-  CHAMPION_IMAGE_URL,
-  ITEM_IMAGE_URL,
-  RUNE_IMAGE,
-  SPELL_IMAGE_ID,
-} from "@/const/api";
-import Image from "next/image";
+import { CHAMPION_IMAGE_URL, RUNE_IMAGE, SPELL_IMAGE_ID } from "@/const/api";
+
 import { SPELL_NAMES } from "@/const/spell";
-import NonItem from "./NonItem";
+
 import { KO, QUEUETYPE } from "@/const/queue";
 
-import {
-  findMainRuneIcon,
-  findRuneIcon,
-  findSubRuneIcon,
-  mainRuneIcon,
-} from "@/hooks/findRuneIcon";
-import styledEngine from "@mui/styled-engine";
+import { findMainRuneIcon, findSubRuneIcon } from "@/hooks/findRuneIcon";
+
 import GameTime from "./GameTime";
 import ChampSpellRune from "./ChampSpellRune";
 import Kda from "./Kda";
 import Item from "./Item";
 import Team from "./Team";
+import GameDetail from "./GameDetail";
+import { useState } from "react";
 
 const GameCard = ({ gameInfo, summonerName }) => {
+  const [gameDetailOpne, setGameDetailOpen] = useState(false);
+
+  const toggleGameDetail = () => {
+    setGameDetailOpen(!gameDetailOpne);
+  };
+
   const { participants, gameCreation, gameDuration, queueId } = gameInfo;
   const lastPlayDate = timeHelper(gameCreation);
 
@@ -44,6 +42,8 @@ const GameCard = ({ gameInfo, summonerName }) => {
   const winners = participants.filter(
     (participant) => participant.win === true
   );
+
+  console.log(winners);
 
   const losers = participants.filter(
     (participant) => participant.win === false
@@ -133,12 +133,13 @@ const GameCard = ({ gameInfo, summonerName }) => {
             <Team winners={winners} losers={losers} />
           </S.Content>
           <S.DropDownBtnBox>
-            <IconButton>
+            <IconButton onClick={toggleGameDetail}>
               <KeyboardArrowDownIcon />
             </IconButton>
           </S.DropDownBtnBox>
         </S.Container>
       )}
+      {gameDetailOpne && <GameDetail setGameDetailOpen={setGameDetailOpen} />}
     </S.Wrapper>
   );
 };
@@ -148,6 +149,7 @@ export default GameCard;
 const S = {};
 
 S.Wrapper = styled.div`
+  position: relative;
   width: 100%;
   height: 100px;
   background-color: ${({ win }) => (win ? "#d5e3ff" : "#ffd8d9")};
@@ -155,6 +157,7 @@ S.Wrapper = styled.div`
 `;
 
 S.Container = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -169,6 +172,9 @@ S.Content = styled.div`
 `;
 
 S.DropDownBtnBox = styled.div`
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
