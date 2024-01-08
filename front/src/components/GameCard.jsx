@@ -139,7 +139,13 @@ const GameCard = ({ gameInfo, summonerName }) => {
           </S.DropDownBtnBox>
         </S.Container>
       )}
-      {gameDetailOpne && <GameDetail setGameDetailOpen={setGameDetailOpen} />}
+      {gameDetailOpne && (
+        <GameDetail
+          setGameDetailOpen={setGameDetailOpen}
+          winners={winners}
+          losers={losers}
+        />
+      )}
     </S.Wrapper>
   );
 };
