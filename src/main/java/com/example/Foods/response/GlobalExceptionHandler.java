@@ -2,16 +2,13 @@ package com.example.Foods.response;
 
 import com.example.Foods.exception.ForbiddenException;
 import com.example.Foods.exception.GateWayTimeOut;
+import com.example.Foods.exception.NotFoundException;
 import com.example.Foods.exception.RateLimitExceeded;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import java.io.IOException;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -1,0 +1,90 @@
+spring:
+  profiles:
+
+      dev: dev
+      test: test
+      prod: prod
+default:
+  string: default property
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  #MySQL
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cv62q26aqh6r.ap-northeast-2.rds.amazonaws.com:3306/RankSearchLocal?&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    &rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999
+    username: admin
+    password: gksksla12
+  #JPA
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        jdbc:
+#          batch_size: 1000
+        globally_quoted_identifiers: true
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    defer-datasource-initialization: true
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  #MySQL
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cv62q26aqh6r.ap-northeast-2.rds.amazonaws.com:3306/RankSearchLocal?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: gksksla12
+
+  #JPA
+  jpa:
+    #database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    defer-datasource-initialization: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  #MySQL
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cv62q26aqh6r.ap-northeast-2.rds.amazonaws.com:3306/RankSearch?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: gksksla12
+
+  #JPA
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    defer-datasource-initialization: true

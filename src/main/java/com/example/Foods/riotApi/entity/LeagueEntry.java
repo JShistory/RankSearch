@@ -35,7 +35,7 @@ public class LeagueEntry {
 //    @JsonIgnore
 //    private boolean miniSeries;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL,optional = false)
     @JoinColumn(name = "summoner_dataId")
     @JsonBackReference
     private Summoner summoner;
