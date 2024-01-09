@@ -10,7 +10,13 @@ const RankTier = ({ rank, tier, point, win, loss, game, type }) => {
   return (
     <S.RankWrapper>
       <S.RankImage>
-        <Image src={`/img/${tierImage}`} width={80} height={80} alt="tier" />
+        <Image
+          src={`/img/${tierImage}`}
+          width={80}
+          height={80}
+          alt="tier"
+          priority
+        />
       </S.RankImage>
       <S.RankContainer>
         <h2>{type} 랭크</h2>

@@ -2,7 +2,6 @@ import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
 import RankTier from "./RankTier";
-import TierImageComponent from "./RankTier";
 
 const UserInfo = ({
   profileIcon,
@@ -36,7 +35,13 @@ const UserInfo = ({
   return (
     <S.UserInfo>
       {/* user profile */}
-      <Image src={profileIcon} width={120} height={120} alt="profile" />
+      <Image
+        src={profileIcon}
+        width={120}
+        height={120}
+        alt="profile"
+        priority={1}
+      />
       <S.UserInfoContainer>
         <S.UserInfoName>
           <S.SummonerName>{summonerName}</S.SummonerName>

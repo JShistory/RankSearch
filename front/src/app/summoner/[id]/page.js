@@ -1,6 +1,5 @@
 "use client";
 
-import TierImageComponent from "@/components/RankTier";
 import Records from "@/components/Records";
 import UserInfo from "@/components/UserInfo";
 import { PROFILE_ICON_URL } from "@/const/api";
@@ -26,12 +25,15 @@ const SummonerPage = () => {
   const summoner = data?.result[0];
 
   const { name: summonerName, tag, prevId } = summoner;
+  console.log(summonerName);
 
   const profileIconId = data?.result[0]?.profileIconId;
   const summonerLevel = data?.result[0]?.summonerLevel;
 
   const soloRankEntry = data?.result[0]?.leagueEntries[0] || {};
   const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
+
+  const { matchData } = summoner;
 
   // const {
   //   tier: soloRankTier,
@@ -90,7 +92,7 @@ const SummonerPage = () => {
             type="자유"
           />
         </S.RankBox> */}
-        <Records summoner={summoner} />
+        <Records matchData={matchData} summonerName={summonerName} />
       </S.Container>
     </S.Wrapper>
   );

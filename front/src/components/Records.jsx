@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import GameCard from "./GameCard";
 
-const Records = ({ summoner }) => {
-  const { matchData } = summoner;
+const Records = ({ matchData, summonerName }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const displayCount = 10;
 
   return (
     <S.Wrapper>
-      {matchData.map((match) => (
-        <GameCard key={match.id} gameInfo={match.gameInfo} />
-      ))}
+      {matchData
+        .slice(0, showAll ? matchData.length : displayCount)
+        .map((match) => (
+          <GameCard
+            key={match.id}
+            gameInfo={match.gameInfo}
+            summonerName={summonerName}
+          />
+        ))}
+      {!showAll && matchData.length > displayCount && (
+        <S.MoreBox>
+          <S.MoreButton onClick={() => setShowAll(true)}>더보기</S.MoreButton>
+        </S.MoreBox>
+      )}
     </S.Wrapper>
   );
 };
@@ -20,6 +33,20 @@ const S = {};
 
 S.Wrapper = styled.div`
   width: 100%;
-  height: 100%;
-  background-color: green;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+S.MoreBox = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+S.MoreButton = styled.button`
+  width: 100px;
+  height: 30px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
 `;
