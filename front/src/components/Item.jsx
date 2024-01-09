@@ -18,7 +18,7 @@ const Item = ({ itemIds, item6 }) => {
                 alt="item"
               />
             ) : (
-              <NonItem />
+              <NonItem width={"36px"} height={"36px"} />
             )}
           </div>
         ))}
@@ -32,7 +32,7 @@ const Item = ({ itemIds, item6 }) => {
             alt="item"
           />
         ) : (
-          <NonItem />
+          <NonItem width={"36px"} height={"36px"} />
         )}
       </S.Item>
     </>

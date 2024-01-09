@@ -3,15 +3,11 @@ import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import Image from "next/image";
-import {
-  CHAMPION_IMAGE_URL,
-  ITEM_IMAGE_URL,
-  RUNE_IMAGE,
-  SPELL_IMAGE_ID,
-} from "@/const/api";
+import { CHAMPION_IMAGE_URL, RUNE_IMAGE, SPELL_IMAGE_ID } from "@/const/api";
 import { SPELL_NAMES } from "@/const/spell";
-import ItemImage from "./ItemImage";
+
 import { findMainRuneIcon, findSubRuneIcon } from "@/hooks/findRuneIcon";
+import ItemImage from "./ItemImage";
 
 const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
   const toggleOpenClose = () => {
@@ -29,8 +25,8 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
       <S.Table>
         <thead>
           <tr>
-            <S.Th>챔피언 & 소환사</S.Th>
-            <S.Th>SR</S.Th>
+            <S.Th style={{ width: "180px" }}>챔피언 & 소환사</S.Th>
+            <S.Th style={{ width: "100px" }}>SR</S.Th>
             <S.Th>Lv</S.Th>
             <S.Th>KDA</S.Th>
             <S.Th style={{ width: "250px" }}>아이템</S.Th>
@@ -44,8 +40,8 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
               <S.Td>
                 <Image
                   src={CHAMPION_IMAGE_URL(winner.championName)}
-                  width={15}
-                  height={15}
+                  width={20}
+                  height={20}
                   alt="champion name"
                 />
                 {winner.summonerName}
@@ -53,32 +49,44 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
               <S.Td>
                 <Image
                   src={SPELL_IMAGE_ID(SPELL_NAMES[winner.dspell])}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="dspell"
                 />
                 <Image
                   src={SPELL_IMAGE_ID(SPELL_NAMES[winner.fspell])}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="fspell"
                 />
+
                 <Image
                   src={RUNE_IMAGE(findMainRuneIcon(winner.mainRuneId1))}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="main rune"
                 />
                 <Image
                   src={RUNE_IMAGE(findSubRuneIcon(winner.subRuneId))}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="main rune"
                 />
               </S.Td>
-              <S.Td>{winner.champLevel}</S.Td>
-              <S.Td></S.Td>
-              <S.Td></S.Td>
+              <S.Td>
+                <span>{winner.champLevel}</span>
+              </S.Td>
+              <S.Td>{`${winner.kills}/${winner.deaths}/${winner.assists}`}</S.Td>
+              <S.Td>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  <ItemImage item={winner.item0} />
+                  <ItemImage item={winner.item1} />
+                  <ItemImage item={winner.item2} />
+                  <ItemImage item={winner.item3} />
+                  <ItemImage item={winner.item4} />
+                  <ItemImage item={winner.item5} />
+                </div>
+              </S.Td>
               <S.Td>{winner.goldEarned} G</S.Td>
               <S.Td>{winner.totalMinionsKilled}</S.Td>
             </S.Tr>
@@ -89,8 +97,8 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
               <S.Td>
                 <Image
                   src={CHAMPION_IMAGE_URL(loser.championName)}
-                  width={15}
-                  height={15}
+                  width={20}
+                  height={20}
                   alt="champion name"
                 />
                 {loser.summonerName}
@@ -98,32 +106,41 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
               <S.Td>
                 <Image
                   src={SPELL_IMAGE_ID(SPELL_NAMES[loser.dspell])}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="dspell"
                 />
                 <Image
                   src={SPELL_IMAGE_ID(SPELL_NAMES[loser.fspell])}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="fspell"
                 />
                 <Image
                   src={RUNE_IMAGE(findMainRuneIcon(loser.mainRuneId1))}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="main rune"
                 />
                 <Image
                   src={RUNE_IMAGE(findSubRuneIcon(loser.subRuneId))}
-                  width={15}
-                  height={15}
+                  width={18}
+                  height={18}
                   alt="main rune"
                 />
               </S.Td>
               <S.Td>{loser.champLevel}</S.Td>
-              <S.Td></S.Td>
-              <S.Td></S.Td>
+              <S.Td>{`${loser.kills}/${loser.deaths}/${loser.assists}`}</S.Td>
+              <S.Td>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  <ItemImage item={loser.item0} />
+                  <ItemImage item={loser.item1} />
+                  <ItemImage item={loser.item2} />
+                  <ItemImage item={loser.item3} />
+                  <ItemImage item={loser.item4} />
+                  <ItemImage item={loser.item5} />
+                </div>
+              </S.Td>
               <S.Td>{loser.goldEarned} G</S.Td>
               <S.Td>{loser.totalMinionsKilled}</S.Td>
             </S.Tr>
