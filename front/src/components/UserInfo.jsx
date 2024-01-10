@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import RankTier from "./RankTier";
@@ -40,15 +41,19 @@ const UserInfo = ({
   const totalFreeRankGames = freeRankWin + freeRankLosses;
 
   const [isRenewing, setIsRenewing] = useState(false);
+  const [renewalTime, setRenewalTime] = useState("");
 
   const handleRenewal = async () => {
     if (isRenewing) {
       return;
     }
 
+    setIsRenewing(true);
+    setRenewalTime(new Date());
+
     try {
       const res = await axios.post(
-        `${BASE_URL}/summoner?input=${summonerName}`
+        `${BASE_URL}/summoner?input=${summonerName}-${tag}`
       );
 
       console.log(res.data.message);
@@ -56,17 +61,34 @@ const UserInfo = ({
       setTimeout(() => {
         setIsRenewing(false);
       }, 60000);
-
-      router.push(router.asPath);
     } catch (error) {
       console.error(error.message);
       setIsRenewing(false);
     }
+    router.refresh();
+  };
+
+  useEffect(() => {
+    return () => {
+      setIsRenewing(false);
+    };
+  }, []);
+
+  const formatTime = () => {
+    if (!renewalTime) {
+      return "";
+    }
+
+    const currentTime = new Date();
+    const elapsedMinutes = Math.floor(
+      (currentTime - renewalTime) / (1000 * 60)
+    );
+
+    return `${elapsedMinutes}분 전`;
   };
 
   return (
     <S.UserInfo>
-      {/* user profile */}
       <Image
         src={profileIcon}
         width={120}
@@ -85,6 +107,7 @@ const UserInfo = ({
           <S.RenewalButton onClick={handleRenewal} disabled={isRenewing}>
             전적 갱신
           </S.RenewalButton>
+          ({formatTime()})
         </S.UserInfoBox>
       </S.UserInfoContainer>
       <S.RankInfo>

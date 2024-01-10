@@ -8,7 +8,7 @@ const Header = () => {
   return (
     <S.Wrapper>
       <S.Container>
-        <S.Logo>Logo</S.Logo>
+        <S.Logo>JJ.GG</S.Logo>
         <SearchBar />
       </S.Container>
     </S.Wrapper>
