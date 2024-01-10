@@ -29,7 +29,7 @@ public class LeagueEntryServiceTest {
     @Transactional
     public void 랭크정보조회() throws Exception {
         //given
-        String input = "괴물쥐-KR3";
+        String input = "소년가장원딜-KR1";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);
@@ -52,7 +52,7 @@ public class LeagueEntryServiceTest {
     @Transactional
     public void 랭크내용저장() throws Exception {
         //given
-        String input = "괴물쥐-KR3";
+        String input = "소년가장원딜-KR1";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);
@@ -73,7 +73,7 @@ public class LeagueEntryServiceTest {
     @Transactional
     public void findBySummoner() throws Exception {
         //given
-        String input = "괴물쥐-KR3";
+        String input = "소년가장원딜-KR1";
         String[] nameAndTag = riotService.splitNameAndTag(input);
         Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         summonerService.saveUser(summoner,nameAndTag[1],nameAndTag[0]);

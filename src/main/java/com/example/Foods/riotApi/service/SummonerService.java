@@ -45,4 +45,9 @@ public class SummonerService {
         return riotRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Summoner> findByFindName(String name){
+        return riotRepository.findByFindName(name);
+    }
+
 }
