@@ -25,7 +25,6 @@ const SummonerPage = () => {
   const summoner = data?.result[0];
 
   const { name: summonerName, tag, prevId } = summoner;
-  console.log(summonerName);
 
   const profileIconId = data?.result[0]?.profileIconId;
   const summonerLevel = data?.result[0]?.summonerLevel;
@@ -34,29 +33,6 @@ const SummonerPage = () => {
   const freeRankEntry = data?.result[0]?.leagueEntries[1] || {};
 
   const { matchData } = summoner;
-
-  // const {
-  //   tier: soloRankTier,
-  //   rank: soloRank,
-  //   leaguePoints: soloLeaguePoint = 0,
-  //   wins: soloRankWin = 0,
-  //   losses: soloRankLosses = 0,
-  // } = soloRankEntry;
-
-  // const {
-  //   tier: freeRankTier,
-  //   rank: freeRank,
-  //   leaguePoints: freeLeaguePoint = 0,
-  //   wins: freeRankWin = 0,
-  //   losses: freeRankLosses = 0,
-  // } = freeRankEntry;
-
-  // const totalSoloRankGames = soloRankWin + soloRankLosses;
-
-  // const totalFreeRankGames = freeRankWin + freeRankLosses;
-  // console.log(totalSoloRankGames);
-
-  // console.log(totalFreeRankGames);
 
   const profileIcon = PROFILE_ICON_URL(profileIconId);
 
@@ -72,26 +48,6 @@ const SummonerPage = () => {
           rankEntry={{ soloRankEntry, freeRankEntry }}
         />
 
-        {/* <S.RankBox>
-          <TierImageComponent
-            rank={soloRank}
-            tier={soloRankTier}
-            point={soloLeaguePoint}
-            win={soloRankWin}
-            loss={soloRankLosses}
-            game={totalSoloRankGames}
-            type="솔로"
-          />
-          <TierImageComponent
-            rank={freeRank}
-            tier={freeRankTier}
-            point={freeLeaguePoint}
-            win={freeRankWin}
-            loss={freeRankLosses}
-            game={totalFreeRankGames}
-            type="자유"
-          />
-        </S.RankBox> */}
         <Records matchData={matchData} summonerName={summonerName} />
       </S.Container>
     </S.Wrapper>
@@ -113,12 +69,3 @@ S.Container = styled.div`
   height: 100%;
   background-color: #eee;
 `;
-
-// S.RankBox = styled.div`
-//   width: 100%;
-//   height: 180px;
-//   display: flex;
-//   justify-content: space-around;
-//   background-color: yellow;
-//   padding: 20px;
-// `;

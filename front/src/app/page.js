@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <S.Wrapper>
       <S.Container>
-        <S.Logo>Logo</S.Logo>
+        <S.Logo>JJ.GG</S.Logo>
         <S.SearchBar>
           <SearchBar />
         </S.SearchBar>

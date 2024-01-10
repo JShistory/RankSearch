@@ -1,5 +1,10 @@
+import { BASE_URL } from "@/const/api";
+import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import RankTier from "./RankTier";
 
@@ -11,6 +16,8 @@ const UserInfo = ({
   prevId,
   rankEntry,
 }) => {
+  const router = useRouter();
+
   const { soloRankEntry, freeRankEntry } = rankEntry;
   const {
     tier: soloRankTier,
@@ -32,6 +39,31 @@ const UserInfo = ({
 
   const totalFreeRankGames = freeRankWin + freeRankLosses;
 
+  const [isRenewing, setIsRenewing] = useState(false);
+
+  const handleRenewal = async () => {
+    if (isRenewing) {
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/summoner?input=${summonerName}`
+      );
+
+      console.log(res.data.message);
+
+      setTimeout(() => {
+        setIsRenewing(false);
+      }, 60000);
+
+      router.push(router.asPath);
+    } catch (error) {
+      console.error(error.message);
+      setIsRenewing(false);
+    }
+  };
+
   return (
     <S.UserInfo>
       {/* user profile */}
@@ -50,7 +82,9 @@ const UserInfo = ({
         <S.UserInfoBox>
           <S.PrevId>Prev.{prevId}</S.PrevId>
           <S.SummonerLevel>Level: {summonerLevel}</S.SummonerLevel>
-          <S.RenewalButton>전적 갱신</S.RenewalButton>
+          <S.RenewalButton onClick={handleRenewal} disabled={isRenewing}>
+            전적 갱신
+          </S.RenewalButton>
         </S.UserInfoBox>
       </S.UserInfoContainer>
       <S.RankInfo>
@@ -84,7 +118,6 @@ const S = {};
 S.UserInfo = styled.div`
   width: 100%;
   height: 200px;
-  /* background-color: pink; */
   padding: 20px;
   display: flex;
   gap: 10px;
@@ -132,7 +165,7 @@ S.RenewalButton = styled.button`
   height: 30px;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #fff;
+  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#fff")};
   border: 1px solid #000;
 `;
 
