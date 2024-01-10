@@ -81,23 +81,28 @@ public class RiotApiController {
 
         Summoner summoner = summonerService.findByFindNameAndTag(name, tag);
         Summoner checkSummoner = riotService.loadUserWithTag(name, tag);
+        if (checkSummoner == null) {
+            basicResponse = BasicResponse.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .message("찾으시는 소환사가 없습니다.")
+                    .build();
+            return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+        }
+
+
+        //db에 소환사가 없으면 api 호출을 통해 소환사의 정보를 불러오고
+        //db에 소환사가 있으면 랭크정보만 최신화해서 보여줌
         if (summoner == null && checkSummoner != null) {
             ResponseEntity<BasicResponse> entity = saveSummoner(input);
 
-
-            if (entity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
-                basicResponse = entity.getBody();
-            }
-
-            else {
-                List<Object> result = entity.getBody().getResult();
-                basicResponse = BasicResponse.builder()
-                        .code(HttpStatus.OK.value())
-                        .httpStatus(HttpStatus.OK)
-                        .result(result)
-                        .message("소환사 찾기 성공")
-                        .build();
-            }
+            List<Object> result = entity.getBody().getResult();
+            basicResponse = BasicResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .httpStatus(HttpStatus.OK)
+                    .result(result)
+                    .message("소환사 찾기 성공")
+                    .build();
         } else {
             LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
             LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
@@ -137,7 +142,6 @@ public class RiotApiController {
         Summoner summoner;
 
         summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-
 
         Summoner checkSummoner = summonerService.findByFindNameAndTag(name, tag);
         if (checkSummoner == null) {
@@ -194,7 +198,8 @@ public class RiotApiController {
 
             //참가자 정보에 대한 코드
             List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
-            List<Participant> savedParticipants1 = participantService.saveAllV1(participantList.subList(0,participantList.size()), gameInfo);
+            List<Participant> savedParticipants1 = participantService.saveAllV1(
+                    participantList.subList(0, participantList.size()), gameInfo);
 //            List<Participant> savedParticipants2 = participantService.saveAllV2(participantList.subList(7,15), gameInfo);
 //            List<Participant> savedParticipants3 = participantService.saveAllV3(participantList.subList(15,participantList.size()), gameInfo);
 
@@ -207,7 +212,7 @@ public class RiotApiController {
         basicResponse = BasicResponse.builder()
                 .code(HttpStatus.OK.value())
                 .httpStatus(HttpStatus.OK)
-                .message("소환사 저장 성공")
+                .message("소환사 조회 성공")
                 .result(List.of(summoner))
                 .build();
 
