@@ -43,8 +43,6 @@ const GameCard = ({ gameInfo, summonerName }) => {
     (participant) => participant.win === true
   );
 
-  console.log(winners);
-
   const losers = participants.filter(
     (participant) => participant.win === false
   );

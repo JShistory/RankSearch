@@ -16,7 +16,7 @@ const SearchBar = () => {
     let keyword = ref.current.value.trim().replaceAll(" ", "+");
     keyword = keyword.replace(/#/g, "-");
     if (keyword.includes("-")) router.push(`/summoner/${keyword}`);
-    else router.push(`/summoner/${keyword}-KR1`);
+    else router.push(`/summoner/${keyword}`);
     ref.current.value = "";
   };
 

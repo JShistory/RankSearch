@@ -14,6 +14,13 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
     setGameDetailOpen(false);
   };
 
+  const winnerTotalKills = winners.reduce(
+    (sum, winner) => sum + winner.kills,
+    0
+  );
+
+  const loserTotalKills = losers.reduce((sum, loser) => sum + loser.kills, 0);
+
   return (
     <S.Wrapper>
       <S.Title>
@@ -76,7 +83,17 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
               <S.Td>
                 <span>{winner.champLevel}</span>
               </S.Td>
-              <S.Td>{`${winner.kills}/${winner.deaths}/${winner.assists}`}</S.Td>
+              <S.Td>
+                <div>
+                  평점
+                  {((winner.kills + winner.assists) / winner.deaths).toFixed(2)}
+                </div>
+                {`${winner.kills}/${winner.deaths}/${
+                  winner.assists
+                }(${Math.round(
+                  ((winner.kills + winner.assists) * 100) / winnerTotalKills
+                )}%)`}
+              </S.Td>
               <S.Td>
                 <div style={{ display: "flex", gap: "4px" }}>
                   <ItemImage item={winner.item0} />
@@ -130,7 +147,15 @@ const GameDetail = ({ setGameDetailOpen, winners, losers }) => {
                 />
               </S.Td>
               <S.Td>{loser.champLevel}</S.Td>
-              <S.Td>{`${loser.kills}/${loser.deaths}/${loser.assists}`}</S.Td>
+              <S.Td>
+                <div>
+                  평점
+                  {((loser.kills + loser.assists) / loser.deaths).toFixed(2)}
+                </div>
+                {`${loser.kills}/${loser.deaths}/${loser.assists}(${Math.round(
+                  ((loser.kills + loser.assists) * 100) / loserTotalKills
+                )}%)`}
+              </S.Td>
               <S.Td>
                 <div style={{ display: "flex", gap: "4px" }}>
                   <ItemImage item={loser.item0} />
@@ -158,7 +183,7 @@ const S = {};
 S.Wrapper = styled.div`
   width: 100%;
   height: 500px;
-  background-color: orange;
+  background-color: #e9e9b1;
   border: 1px solid gray;
   margin: 0;
   z-index: 9;
