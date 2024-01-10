@@ -84,7 +84,7 @@ public class RiotApiController {
         String tag = nameAndTag[1];
 
         //만약에 입력에 태그가 없고 findName으로 조회했을 때 소환사가 여러 명이면
-        List<Summoner> summonerList = summonerService.findByFindName(name.toLowerCase());
+        List<Summoner> summonerList = summonerService.findByFindName(name.toLowerCase().replaceAll(" ",""));
         if(summonerList.size() > 1 && isTag == false){
             List<String> nameAndTags = new ArrayList<>();
             for(Summoner data: summonerList){
