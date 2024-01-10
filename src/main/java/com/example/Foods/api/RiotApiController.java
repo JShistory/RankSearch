@@ -74,10 +74,30 @@ public class RiotApiController {
     @GetMapping("/summoner")
     public ResponseEntity<BasicResponse> findSummoner(String input)
             throws IOException, ParseException {
+        boolean isTag = true;
+        if(!input.contains("-")){
+            isTag = false;
+        }
         String[] nameAndTag = riotService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
+
+        //만약에 입력에 태그가 없고 findName으로 조회했을 때 소환사가 여러 명이면
+        List<Summoner> summonerList = summonerService.findByFindName(name.toLowerCase());
+        if(summonerList.size() > 1 && isTag == false){
+            List<String> nameAndTags = new ArrayList<>();
+            for(Summoner data: summonerList){
+                nameAndTags.add(data.getName() +"#"+ data.getTag());
+            }
+            basicResponse = BasicResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .httpStatus(HttpStatus.OK)
+                    .message("여러 소환사 조회")
+                    .result(Collections.singletonList(nameAndTags))
+                    .build();
+            return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
+        }
 
         Summoner summoner = summonerService.findByFindNameAndTag(name, tag);
         Summoner checkSummoner = riotService.loadUserWithTag(name, tag);
@@ -168,7 +188,7 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
 
         //최근 20개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 13);
+        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 5);
         GameInfo gameInfo;
         MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
@@ -212,7 +232,7 @@ public class RiotApiController {
         basicResponse = BasicResponse.builder()
                 .code(HttpStatus.OK.value())
                 .httpStatus(HttpStatus.OK)
-                .message("소환사 조회 성공")
+                .message("소환사 찾기 성공")
                 .result(List.of(summoner))
                 .build();
 
