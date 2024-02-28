@@ -34,7 +34,6 @@
 
 - FRAMEWORK VERSION: Spring Boot 3.0
 - VERSION: java 17
-- DB: H2 database
 
 # 📝ERD 
 ![image](https://github.com/JShistory/RankSearch/assets/98608723/86d7ab75-58de-4864-9815-62e42c60aec8)
