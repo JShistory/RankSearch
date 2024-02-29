@@ -49,7 +49,9 @@ https://developer.riotgames.com/
 # 📌주요기능
 - 리그 오브 레전드에 사용자 정보를 가져옴
   - 소환사 이름, 소환사 레벨, 소환사 랭크 정보, 승률, 이전 아이디, 최근 20게임에 대한 정보를 알려줌
-    - 최근 게임에서는 게임 타입, 게임 종료 시간/시작 시간, 승/패, 아이템 정보, 킬/데스/어시스트, 룬/특성/스펠, CS/Gold 에 정보를 알려줌  
+    - 최근 게임에서는 게임 타입, 게임 종료 시간/시작 시간, 승/패, 아이템 정보, 킬/데스/어시스트, 룬/특성/스펠, CS/Gold 에 정보를 알려줌
+  - 전적 갱신 버튼을 누르면 최근 20게임에 대한 데이터가 동기화 됨
+    - 게임 고유 ID를 저장함으로 새롭게 추가된 데이터에 한해서 동기화가 됨
 
 ![image](https://github.com/JShistory/RankSearch/assets/98608723/9c018b44-eda9-4325-bc04-6cd75fee2b6a)
 ![image](https://github.com/JShistory/RankSearch/assets/98608723/f40bf295-65b7-42c7-b9f9-b3cdb429daf0)
