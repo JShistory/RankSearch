@@ -5,49 +5,27 @@ import com.example.Foods.exception.GateWayTimeOut;
 import com.example.Foods.exception.NotFoundException;
 import com.example.Foods.exception.RateLimitExceeded;
 import com.example.Foods.response.ErrorCode;
-import com.example.Foods.riotApi.entity.AccountDTO;
+import com.example.Foods.riotApi.dto.AccountDTO;
 import com.example.Foods.riotApi.entity.GameInfo;
-import com.example.Foods.riotApi.entity.GameInfoDto;
 import com.example.Foods.riotApi.entity.LeagueEntry;
-import com.example.Foods.riotApi.entity.LeagueEntryDTO;
-import com.example.Foods.riotApi.entity.MatchDTO;
+import com.example.Foods.riotApi.dto.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.MetaData;
-import com.example.Foods.riotApi.entity.MetaDataDTO;
 import com.example.Foods.riotApi.entity.Participant;
-import com.example.Foods.riotApi.entity.ParticipantDto;
 import com.example.Foods.riotApi.entity.SpellType;
 import com.example.Foods.riotApi.entity.Summoner;
-import com.example.Foods.riotApi.repository.LeagueEntryRepository;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.util.JsonParserDelegate;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.Foods.riotApi.repository.RiotRepository;
-import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.sql.SQLOutput;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.naming.LimitExceededException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -55,24 +33,21 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class RiotService {
+public class RiotApiService {
 
     private final SummonerService summonerService;
     private final LeagueEntryService leagueEntryService;
@@ -80,7 +55,6 @@ public class RiotService {
 
     @Value("${riot.api.key}")
     private String riotApiKey;
-
     //riot 유저 검색 url
     @Value("${riot.api.summonerUrl}")
     private String summonerUrl;

@@ -1,5 +1,6 @@
-package com.example.Foods.riotApi.entity;
+package com.example.Foods.riotApi.dto;
 
+import com.example.Foods.riotApi.entity.Participant;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Builder;

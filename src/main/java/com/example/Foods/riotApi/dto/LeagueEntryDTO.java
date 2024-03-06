@@ -1,4 +1,4 @@
-package com.example.Foods.riotApi.entity;
+package com.example.Foods.riotApi.dto;
 
 import lombok.Builder;
 import lombok.Data;

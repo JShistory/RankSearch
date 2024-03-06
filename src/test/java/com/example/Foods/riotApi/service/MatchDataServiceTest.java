@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 public class MatchDataServiceTest {
     @Autowired
-    private RiotService riotService;
+    private RiotApiService riotApiService;
     @Autowired
     private MatchService matchService;
 
@@ -32,11 +32,11 @@ public class MatchDataServiceTest {
     public void 매치저장() throws Exception {
         //given
         String input = "1Byte";
-        String[] nameAndTag = riotService.splitNameAndTag(input);
-        Summoner summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 3);
-        MetaData metaDataDTO = riotService.loadMetaDataInfo(gameList.get(0));
-        GameInfo gameInfoDto = riotService.loadGameInfo(gameList.get(0));
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
+        Summoner summoner = riotApiService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        List<String> gameList = riotApiService.loadGameList(summoner.getPuuid(), 0, 3);
+        MetaData metaDataDTO = riotApiService.loadMetaDataInfo(gameList.get(0));
+        GameInfo gameInfoDto = riotApiService.loadGameInfo(gameList.get(0));
 
 
         //when
@@ -77,7 +77,7 @@ public class MatchDataServiceTest {
     public void mata데이터불러오기() throws Exception {
         //given
 //        MatchDTO matchDTO = riotService.loadGameInfo("KR_6815291259");
-        MetaData metaData = riotService.loadMetaDataInfo("KR_6815291259");
+        MetaData metaData = riotApiService.loadMetaDataInfo("KR_6815291259");
         //when
         //then
         Assertions.assertEquals(metaData.getMatchId(),"KR_6815291259");
@@ -88,7 +88,7 @@ public class MatchDataServiceTest {
     public void gameInfo데이터불러오기() throws Exception {
         //given
 //        MatchDTO matchDTO = riotService.loadGameInfo("KR_6815291259");
-        GameInfo gameInfo = riotService.loadGameInfo("KR_6815291259");
+        GameInfo gameInfo = riotApiService.loadGameInfo("KR_6815291259");
         //when
         //then
         Assertions.assertEquals(gameInfo.getGameMode(),"ARAM");

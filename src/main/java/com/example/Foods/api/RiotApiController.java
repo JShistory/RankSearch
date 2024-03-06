@@ -1,10 +1,9 @@
 package com.example.Foods.api;
 
 import com.example.Foods.response.BasicResponse;
-import com.example.Foods.response.ErrorCode;
 import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.LeagueEntry;
-import com.example.Foods.riotApi.entity.LeagueEntryDTO;
+import com.example.Foods.riotApi.dto.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.MatchData;
 import com.example.Foods.riotApi.entity.MetaData;
 import com.example.Foods.riotApi.entity.Participant;
@@ -14,9 +13,9 @@ import com.example.Foods.riotApi.service.LeagueEntryService;
 import com.example.Foods.riotApi.service.MatchService;
 import com.example.Foods.riotApi.service.MetaDataService;
 import com.example.Foods.riotApi.service.ParticipantService;
-import com.example.Foods.riotApi.service.RiotService;
+import com.example.Foods.riotApi.service.RiotApiService;
 import com.example.Foods.riotApi.service.SummonerService;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,23 +23,19 @@ import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 
 public class RiotApiController {
-    private final RiotService riotService;
+    private final RiotApiService riotApiService;
     private final SummonerService summonerService;
     private final LeagueEntryService leagueEntryService;
     private final MatchService matchService;
@@ -78,7 +73,7 @@ public class RiotApiController {
         if(!input.contains("-")){
             isTag = false;
         }
-        String[] nameAndTag = riotService.splitNameAndTag(input);
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
@@ -100,7 +95,7 @@ public class RiotApiController {
         }
 
         Summoner summoner = summonerService.findByFindNameAndTag(name, tag);
-        Summoner checkSummoner = riotService.loadUserWithTag(name, tag);
+        Summoner checkSummoner = riotApiService.loadUserWithTag(name, tag);
         if (checkSummoner == null) {
             basicResponse = BasicResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
@@ -124,8 +119,8 @@ public class RiotApiController {
                     .message("소환사 찾기 성공")
                     .build();
         } else {
-            LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
-            LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
+            LeagueEntryDTO soloLeagueEntryDTO = riotApiService.loadSoloRank(summoner.getId(), summoner.getDataId());
+            LeagueEntryDTO flexLeagueEntryDTO = riotApiService.loadFlexRank(summoner.getId(), summoner.getDataId());
             LeagueEntry flex = null;
             LeagueEntry solo = null;
             if (soloLeagueEntryDTO != null) {
@@ -155,13 +150,13 @@ public class RiotApiController {
     @PostMapping("/summoner")
     public ResponseEntity<BasicResponse> saveSummoner(String input)
             throws IOException, ParseException {
-        String[] nameAndTag = riotService.splitNameAndTag(input);
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
         String tag = nameAndTag[1];
         Summoner summoner;
 
-        summoner = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        summoner = riotApiService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
 
         Summoner checkSummoner = summonerService.findByFindNameAndTag(name, tag);
         if (checkSummoner == null) {
@@ -171,8 +166,8 @@ public class RiotApiController {
         }
 
         //솔로랭크, 자유랭크 정보 저장
-        LeagueEntryDTO soloLeagueEntryDTO = riotService.loadSoloRank(summoner.getId(), summoner.getDataId());
-        LeagueEntryDTO flexLeagueEntryDTO = riotService.loadFlexRank(summoner.getId(), summoner.getDataId());
+        LeagueEntryDTO soloLeagueEntryDTO = riotApiService.loadSoloRank(summoner.getId(), summoner.getDataId());
+        LeagueEntryDTO flexLeagueEntryDTO = riotApiService.loadFlexRank(summoner.getId(), summoner.getDataId());
         LeagueEntry flex = null;
         LeagueEntry solo = null;
         if (soloLeagueEntryDTO != null) {
@@ -188,7 +183,7 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
 
         //최근 20개의 게임을 불러옴
-        List<String> gameList = riotService.loadGameList(summoner.getPuuid(), 0, 5);
+        List<String> gameList = riotApiService.loadGameList(summoner.getPuuid(), 0, 5);
         GameInfo gameInfo;
         MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
@@ -206,8 +201,8 @@ public class RiotApiController {
                 continue;
             }
 
-            gameInfo = riotService.loadGameInfo(game);
-            metaData = riotService.loadMetaDataInfo(game);
+            gameInfo = riotApiService.loadGameInfo(game);
+            metaData = riotApiService.loadMetaDataInfo(game);
             gameInfoService.saveGameInfo(gameInfo);
             metaDataService.saveMetaData(metaData);
 
@@ -217,7 +212,7 @@ public class RiotApiController {
             metaData.putMatch(matchData);
 
             //참가자 정보에 대한 코드
-            List<Participant> participantList = riotService.loadParticipantsGameInfo(game);
+            List<Participant> participantList = riotApiService.loadParticipantsGameInfo(game);
             List<Participant> savedParticipants1 = participantService.saveAllV1(
                     participantList.subList(0, participantList.size()), gameInfo);
 //            List<Participant> savedParticipants2 = participantService.saveAllV2(participantList.subList(7,15), gameInfo);

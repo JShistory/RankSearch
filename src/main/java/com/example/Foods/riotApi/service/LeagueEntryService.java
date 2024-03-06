@@ -2,24 +2,13 @@ package com.example.Foods.riotApi.service;
 
 
 import com.example.Foods.riotApi.entity.LeagueEntry;
-import com.example.Foods.riotApi.entity.LeagueEntryDTO;
+import com.example.Foods.riotApi.dto.LeagueEntryDTO;
 import com.example.Foods.riotApi.entity.Summoner;
 import com.example.Foods.riotApi.repository.LeagueEntryRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
-import lombok.NoArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

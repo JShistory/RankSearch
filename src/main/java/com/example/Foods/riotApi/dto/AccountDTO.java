@@ -1,4 +1,4 @@
-package com.example.Foods.riotApi.entity;
+package com.example.Foods.riotApi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

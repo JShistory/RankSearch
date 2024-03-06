@@ -1,5 +1,6 @@
-package com.example.Foods.riotApi.entity;
+package com.example.Foods.riotApi.dto;
 
+import com.example.Foods.riotApi.entity.SpellType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.example.Foods.riotApi.repository;
 
 import com.example.Foods.riotApi.entity.Summoner;
-import com.example.Foods.riotApi.entity.SummonerDTO;
+
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 

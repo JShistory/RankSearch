@@ -9,16 +9,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class RiotServiceTest {
+public class RiotApiServiceTest {
 
     @Autowired
-    private RiotService riotService;
+    private RiotApiService riotApiService;
     @Autowired
     private EntityManager em;
     @Autowired
@@ -37,9 +36,9 @@ public class RiotServiceTest {
     public void 중복소환사() throws Exception {
         //given
         String input = "1Byte";
-        String[] nameAndTag = riotService.splitNameAndTag(input);
-        Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
-        Summoner summoner2 = riotService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
+        Summoner summoner1 = riotApiService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
+        Summoner summoner2 = riotApiService.loadUserWithTag(nameAndTag[0],nameAndTag[1]);
         summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
         summonerService.saveUser(summoner2,nameAndTag[1],nameAndTag[0]);
         //when
@@ -57,8 +56,8 @@ public class RiotServiceTest {
     public void findByNameAndTag동작V1() throws Exception {
         //given
         String input = "괴물쥐-KR3";
-        String[] nameAndTag = riotService.splitNameAndTag(input);
-        Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
+        Summoner summoner1 = riotApiService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
         //when
         em.flush();
@@ -72,8 +71,8 @@ public class RiotServiceTest {
     public void findByNameAndTag동작V2() throws Exception {
         //given
         String input = "괴물쥐-고라파덕";
-        String[] nameAndTag = riotService.splitNameAndTag(input);
-        Summoner summoner1 = riotService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
+        String[] nameAndTag = riotApiService.splitNameAndTag(input);
+        Summoner summoner1 = riotApiService.loadUserWithTag(nameAndTag[0], nameAndTag[1]);
         summonerService.saveUser(summoner1,nameAndTag[1],nameAndTag[0]);
 
         //when
