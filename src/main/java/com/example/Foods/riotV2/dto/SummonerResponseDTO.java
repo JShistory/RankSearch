@@ -1,11 +1,11 @@
-package com.example.Foods.riotV2.dtoV2;
+package com.example.Foods.riotV2.dto;
 
-import com.example.Foods.riotV2.entityV2.SummonerV2;
+import com.example.Foods.riotV2.domain.SummonerV2;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SummonerV2ResponseDTO {
+public class SummonerResponseDTO {
     private Long id;
     private String accountId;
     private int profileIconId;
@@ -17,7 +17,7 @@ public class SummonerV2ResponseDTO {
     private Long summonerLevel;
 
     @Builder
-    public SummonerV2ResponseDTO(SummonerV2 entity){
+    public SummonerResponseDTO(SummonerV2 entity){
         this.id = entity.getId();
         this.name = entity.getName();
         this.puuid = entity.getPuuid();

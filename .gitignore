@@ -35,5 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
-application.properties
+
 MyServerKeyPair.pem
+build.gradle
+.yml
+.properties

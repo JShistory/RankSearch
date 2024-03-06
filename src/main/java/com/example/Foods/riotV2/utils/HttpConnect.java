@@ -1,6 +1,5 @@
-package com.example.Foods.riotV2.utilsV2;
+package com.example.Foods.riotV2.utils;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;

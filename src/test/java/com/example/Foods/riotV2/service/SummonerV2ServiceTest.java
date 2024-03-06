@@ -1,7 +1,9 @@
-package com.example.Foods.riotV2.serviceV2;
+package com.example.Foods.riotV2.service;
 
-import com.example.Foods.riotV2.dtoV2.SummonerV2RequestDTO;
-import com.example.Foods.riotV2.utilsV2.HttpConnect;
+import com.example.Foods.riotV2.dto.SummonerRequestDTO;
+import com.example.Foods.riotV2.dto.SummonerResponseDTO;
+import com.example.Foods.riotV2.dto.SummonerSaveRequestDTO;
+import com.example.Foods.riotV2.utils.HttpConnect;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +21,7 @@ public class SummonerV2ServiceTest {
     public void 소환사_검색_API_검증() throws IOException {
         String name = "1Byte";
         String tag = "KR1";
-        SummonerV2RequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
+        SummonerSaveRequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
 
         assertEquals(requestDTO.getName().replaceAll(" ",""), name);
         assertEquals(requestDTO.getTag(),tag);
@@ -31,6 +33,20 @@ public class SummonerV2ServiceTest {
         System.out.println(requestDTO.getPuuid());
         System.out.println(requestDTO.getRevisionDate());
         System.out.println(requestDTO.getSummonerLevel());
+
+    }
+
+    @Test
+    public void 소환사_검색_API_저장() throws IOException {
+        String name = "1Byte";
+        String tag = "KR1";
+        SummonerSaveRequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
+
+        Long saveId = summonerV2Service.save(requestDTO);
+
+        SummonerResponseDTO responseDTO = summonerV2Service.findById(saveId);
+
+        assertEquals(responseDTO.getTag(),tag);
 
     }
 }

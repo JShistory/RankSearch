@@ -1,22 +1,23 @@
-package com.example.Foods.riotV2.dtoV2;
+package com.example.Foods.riotV2.dto;
 
-import com.example.Foods.riotV2.entityV2.SummonerV2;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ApiV2RequestDTO {
+public class SummonerApiRequestDTO {
     private String accountId;
     private int profileIconId;
     private Long revisionDate;
     private Long summonerLevel;
+    private String entrypedId;
 
     @Builder
-    public ApiV2RequestDTO(String accountId, int profileIconId, Long revisionDate, Long summonerLevel){
+    public SummonerApiRequestDTO(String accountId, int profileIconId, Long revisionDate, Long summonerLevel, String entrypedId){
         this.accountId = accountId;
         this.profileIconId = profileIconId;
         this.revisionDate = revisionDate;
         this.summonerLevel = summonerLevel;
+        this.entrypedId = entrypedId;
     }
 
 

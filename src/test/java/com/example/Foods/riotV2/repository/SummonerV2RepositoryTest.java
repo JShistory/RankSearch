@@ -1,7 +1,7 @@
-package com.example.Foods.riotV2.entityV2;
+package com.example.Foods.riotV2.domain;
 
-import com.example.Foods.riotV2.repositoryV2.LeagueEntryV2Repository;
-import com.example.Foods.riotV2.repositoryV2.SummonerV2Repository;
+import com.example.Foods.riotV2.repository.LeagueEntryV2Repository;
+import com.example.Foods.riotV2.repository.SummonerV2Repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

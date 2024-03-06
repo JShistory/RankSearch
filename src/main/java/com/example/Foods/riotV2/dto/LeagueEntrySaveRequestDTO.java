@@ -1,11 +1,11 @@
-package com.example.Foods.riotV2.dtoV2;
+package com.example.Foods.riotV2.dto;
 
-import com.example.Foods.riotV2.entityV2.LeagueEntryV2;
+import com.example.Foods.riotV2.domain.LeagueEntryV2;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class LeagueEntryV2RequestDTO {
+public class LeagueEntrySaveRequestDTO {
     private String leagueId;
     private String queueType;
     private String tier;
@@ -15,7 +15,7 @@ public class LeagueEntryV2RequestDTO {
     private int losses;
 
     @Builder
-    public LeagueEntryV2RequestDTO(String leagueId, String queueType, String tier, String rank, int leaguePoints, int wins, int losses) {
+    public LeagueEntrySaveRequestDTO(String leagueId, String queueType, String tier, String rank, int leaguePoints, int wins, int losses) {
         this.leagueId = leagueId;
         this.queueType = queueType;
         this.tier = tier;
@@ -24,6 +24,8 @@ public class LeagueEntryV2RequestDTO {
         this.wins = wins;
         this.losses = losses;
     }
+
+
 
     public LeagueEntryV2 toEntity(){
         return LeagueEntryV2.builder()

@@ -1,4 +1,4 @@
-package com.example.Foods.riotV2.entityV2;
+package com.example.Foods.riotV2.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;

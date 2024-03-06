@@ -1,11 +1,12 @@
-package com.example.Foods.riotV2.serviceV2;
+package com.example.Foods.riotV2.service;
 
-import com.example.Foods.riotV2.dtoV2.ApiV2RequestDTO;
-import com.example.Foods.riotV2.dtoV2.SummonerV2RequestDTO;
-import com.example.Foods.riotV2.dtoV2.SummonerV2ResponseDTO;
-import com.example.Foods.riotV2.entityV2.SummonerV2;
-import com.example.Foods.riotV2.repositoryV2.SummonerV2Repository;
-import com.example.Foods.riotV2.utilsV2.HttpConnect;
+import com.example.Foods.riotV2.domain.SummonerV2;
+import com.example.Foods.riotV2.dto.SummonerApiRequestDTO;
+import com.example.Foods.riotV2.dto.SummonerRequestDTO;
+import com.example.Foods.riotV2.dto.SummonerResponseDTO;
+import com.example.Foods.riotV2.dto.SummonerSaveRequestDTO;
+import com.example.Foods.riotV2.repository.SummonerV2Repository;
+import com.example.Foods.riotV2.utils.HttpConnect;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,27 +29,35 @@ public class SummonerV2Service {
     private String riotApiKey;
 
     @Transactional
-    public Long save(SummonerV2RequestDTO requestDTO){
+    public Long save(SummonerSaveRequestDTO requestDTO){
         return summonerV2Repository.save(requestDTO.toEntity()).getId();
     }
 
     @Transactional(readOnly = true)
-    public SummonerV2ResponseDTO findById(Long id){
+    public SummonerResponseDTO findById(Long id){
         SummonerV2 entity = summonerV2Repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 소환사는 없습니다."));
-        return new SummonerV2ResponseDTO(entity);
+        return new SummonerResponseDTO(entity);
     }
 
-    public SummonerV2RequestDTO loadUserWithNameAndTag(String name, String tag) {
+    /**
+     * @param name 소환사 이름
+     * @param tag 소환사 태그
+     * 소환사의 이름과 태그를 통해 Puuid(고유값)을 알아낸 뒤 Puuid를 통해 많은 정보를 가져오기 위함
+     * loadUserWithNameAndTag --> loadUserWithPuuid
+     */
+
+    public SummonerSaveRequestDTO loadUserWithNameAndTag(String name, String tag) {
         String apiUrl = summonerAndTagUrl + name + "/" + tag + "?api_key=" + riotApiKey;
         String result = httpConnect.connectUrl(apiUrl);
-        ApiV2RequestDTO requestDTO = null;
+
 
         String gameName = null;
         String puuid = null;
         String tagLine = null;
-        JSONParser jsonParser = new JSONParser();
+
         try {
+            JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
             gameName = (String) jsonObject.get("gameName");
             puuid = (String) jsonObject.get("puuid");
@@ -57,43 +66,50 @@ public class SummonerV2Service {
             throw new RuntimeException(e);
         }
 
-        requestDTO = loadUserWithPuuid(puuid);
-        return SummonerV2RequestDTO.builder()
-                .summonerLevel(requestDTO.getSummonerLevel())
-                .revisionDate(requestDTO.getRevisionDate())
-                .profileIconId(requestDTO.getProfileIconId())
-                .accountId(requestDTO.getAccountId())
+        SummonerApiRequestDTO entity = loadUserWithPuuid(puuid);
+        SummonerSaveRequestDTO requestDTO = SummonerSaveRequestDTO.builder()
                 .name(gameName)
                 .puuid(puuid)
                 .tag(tagLine)
                 .findName(gameName.toLowerCase().replaceAll(" ",""))
+                .accountId(entity.getAccountId())
+                .profileIconId(entity.getProfileIconId())
+                .revisionDate(entity.getRevisionDate())
+                .summonerLevel(entity.getSummonerLevel())
+                .encryptedId(entity.getEntrypedId())
                 .build();
+
+        return requestDTO;
     }
 
-    public ApiV2RequestDTO loadUserWithPuuid(String puuid){
+    public SummonerApiRequestDTO loadUserWithPuuid(String puuid){
         String apiUrl = summonerPuuidUrl + puuid + "?api_key=" + riotApiKey;
         String result = httpConnect.connectUrl(apiUrl);
 
-        String accountId;
+        String accountId = null;
         int profileIconId;
-        long revisionDate;
-        long summonerLevel;
-        JSONParser jsonParser = new JSONParser();
+        long revisionDate = 0L;
+        long summonerLevel = 0L;
+        String encrypedId = null;
+
         try {
+            JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
             accountId = (String) jsonObject.get("accountId");
             profileIconId = Integer.valueOf(jsonObject.get("profileIconId").toString());
             revisionDate = (long) jsonObject.get("revisionDate");
             summonerLevel = (long) jsonObject.get("summonerLevel");
+            encrypedId = (String) jsonObject.get("id");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
 
-        return ApiV2RequestDTO.builder()
+        return SummonerApiRequestDTO.builder()
                 .summonerLevel(summonerLevel)
                 .accountId(accountId)
                 .profileIconId(profileIconId)
                 .revisionDate(revisionDate)
+                .entrypedId(encrypedId)
                 .build();
     }
 }
