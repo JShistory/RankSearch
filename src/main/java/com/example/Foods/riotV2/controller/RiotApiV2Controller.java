@@ -1,6 +1,5 @@
 package com.example.Foods.riotV2.controller;
 
-import com.example.Foods.riotV2.domain.LeagueEntryV2;
 import com.example.Foods.riotV2.domain.SummonerV2;
 import com.example.Foods.riotV2.dto.LeagueEntrySaveRequestDTO;
 import com.example.Foods.riotV2.dto.SummonerResponseDTO;
@@ -10,9 +9,7 @@ import com.example.Foods.riotV2.service.SummonerV2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v2")
@@ -35,7 +32,6 @@ public class RiotApiV2Controller {
 
     @GetMapping("/summoner/{id}")
     public SummonerResponseDTO findById(@PathVariable Long id) {
-//        SummonerResponseDTO responseDTO = summonerV2Service.findById(id);
         return summonerV2Service.findById(id);
     }
 

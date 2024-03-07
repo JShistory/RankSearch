@@ -2,7 +2,6 @@ package com.example.Foods.riotV2.service;
 
 import com.example.Foods.riotV2.domain.SummonerV2;
 import com.example.Foods.riotV2.dto.SummonerApiRequestDTO;
-import com.example.Foods.riotV2.dto.SummonerRequestDTO;
 import com.example.Foods.riotV2.dto.SummonerResponseDTO;
 import com.example.Foods.riotV2.dto.SummonerSaveRequestDTO;
 import com.example.Foods.riotV2.repository.SummonerV2Repository;
