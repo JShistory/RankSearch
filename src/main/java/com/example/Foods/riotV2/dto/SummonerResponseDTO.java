@@ -23,12 +23,9 @@ public class SummonerResponseDTO {
     public SummonerResponseDTO(SummonerV2 entity){
         this.id = entity.getId();
         this.name = entity.getName();
-//        this.puuid = entity.getPuuid();
         this.tag = entity.getTag();
         this.findName = entity.getFindName();
-//        this.accountId = entity.getAccountId();
         this.profileIconId = entity.getProfileIconId();
-//        this.revisionDate = entity.getRevisionDate();
         this.summonerLevel = entity.getSummonerLevel();
         checkLeague(entity.getLeague());
     }
@@ -46,11 +43,8 @@ public class SummonerResponseDTO {
 
     public SummonerV2 toEntity(){
         return SummonerV2.builder()
-//                .accountId(accountId)
                 .profileIconId(profileIconId)
-//                .revisionDate(revisionDate)
                 .name(name)
-//                .puuid(puuid)
                 .tag(tag)
                 .findName(findName)
                 .summonerLevel(summonerLevel)
