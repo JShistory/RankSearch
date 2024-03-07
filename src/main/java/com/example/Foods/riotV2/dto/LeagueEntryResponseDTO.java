@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 public class LeagueEntryResponseDTO {
     private Long id;
-    private String leagueId;
     private String queueType;
     private String tier;
     private String rank;
@@ -18,7 +17,6 @@ public class LeagueEntryResponseDTO {
     @Builder
     public LeagueEntryResponseDTO(LeagueEntryV2 entity) {
         this.id = entity.getId();
-        this.leagueId = entity.getLeagueId();
         this.queueType = entity.getQueueType();
         this.tier = entity.getTier();
         this.rank = entity.getRank();
@@ -29,7 +27,6 @@ public class LeagueEntryResponseDTO {
 
     public LeagueEntryV2 toEntity(){
         return LeagueEntryV2.builder()
-                .leagueId(leagueId)
                 .queueType(queueType)
                 .tier(tier)
                 .rank(rank)

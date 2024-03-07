@@ -32,12 +32,23 @@ public class SummonerV2Service {
     public Long save(SummonerSaveRequestDTO requestDTO){
         return summonerV2Repository.save(requestDTO.toEntity()).getId();
     }
+    @Transactional
+    public Long save(SummonerV2 summonerV2){
+        return summonerV2Repository.save(summonerV2).getId();
+    }
 
     @Transactional(readOnly = true)
     public SummonerResponseDTO findById(Long id){
         SummonerV2 entity = summonerV2Repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 소환사는 없습니다."));
         return new SummonerResponseDTO(entity);
+    }
+
+    public Long delete(Long id){
+        SummonerV2 summoner = summonerV2Repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 소환사는 없습니다."));
+        summonerV2Repository.delete(summoner);
+        return id;
     }
 
     /**
