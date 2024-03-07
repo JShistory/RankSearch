@@ -27,9 +27,17 @@ public class SummonerV2 {
     @OneToMany(mappedBy = "summonerV2",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LeagueEntryV2> league = new ArrayList<>();
 
+    @OneToMany(mappedBy = "summonerV2",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<GameInfoV2> gameInfo = new ArrayList<>();
+
     public void addLeagueEntry(LeagueEntryV2 LeagueEntry){
         this.league.add(LeagueEntry);
         LeagueEntry.setSummonerV2(this);
+    }
+
+    public void addGameInfo(GameInfoV2 gameInfoV2){
+        this.gameInfo.add(gameInfoV2);
+        gameInfoV2.setSummonerV2(this);
     }
 
     @Builder
