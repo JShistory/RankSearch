@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -150,6 +153,7 @@ public class RiotApiController {
     @PostMapping("/summoner")
     public ResponseEntity<BasicResponse> saveSummoner(String input)
             throws IOException, ParseException {
+        long time = System.currentTimeMillis();
         String[] nameAndTag = riotApiService.splitNameAndTag(input);
         BasicResponse basicResponse = new BasicResponse();
         String name = nameAndTag[0];
@@ -183,7 +187,7 @@ public class RiotApiController {
         summoner.putLeagueData(flex);
 
         //최근 20개의 게임을 불러옴
-        List<String> gameList = riotApiService.loadGameList(summoner.getPuuid(), 0, 5);
+        List<String> gameList = riotApiService.loadGameList(summoner.getPuuid(), 0, 20);
         GameInfo gameInfo;
         MetaData metaData;
         List<MatchData> matchDataList = summoner.getMatchData();
@@ -230,7 +234,8 @@ public class RiotApiController {
                 .message("소환사 찾기 성공")
                 .result(List.of(summoner))
                 .build();
-
+        long t = System.currentTimeMillis() - time;
+        log.info(String.valueOf(t)+"초 걸림");
         return new ResponseEntity<>(basicResponse, basicResponse.getHttpStatus());
 
     }

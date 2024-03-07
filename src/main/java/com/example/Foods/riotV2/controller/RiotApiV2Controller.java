@@ -29,6 +29,7 @@ public class RiotApiV2Controller {
 
     @PostMapping("/summoner")
     public Long summoner(@RequestParam String name, @RequestParam String tag) {
+        long time = System.currentTimeMillis();
         SummonerSaveRequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
         SummonerV2 summonerV2 = requestDTO.toEntity();
 
@@ -51,7 +52,8 @@ public class RiotApiV2Controller {
         }
 
 
-
+        long t = System.currentTimeMillis() - time;
+        log.info(String.valueOf(t)+"초 걸림");
         return summonerV2Service.save(summonerV2);
     }
 
