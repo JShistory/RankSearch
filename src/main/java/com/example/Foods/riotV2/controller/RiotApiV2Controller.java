@@ -41,6 +41,7 @@ public class RiotApiV2Controller {
         }
 
         //게임 정보(20게임) 연관 관계 설정), 게임 참가자 연관관계 설정
+        //20게임에 대한 matchId를 가져옴
         List<GameInfoSaveRequestDTO> gameInfoRequestDTO = gameInfoV2Service.loadMatchData(requestDTO.getPuuid(), start, count);
         for (GameInfoSaveRequestDTO data : gameInfoRequestDTO) {
             GameInfoV2 entity = data.toEntity();
