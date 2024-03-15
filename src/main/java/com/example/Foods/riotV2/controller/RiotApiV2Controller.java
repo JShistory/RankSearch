@@ -42,18 +42,18 @@ public class RiotApiV2Controller {
 
         //게임 정보(20게임) 연관 관계 설정), 게임 참가자 연관관계 설정
         List<GameInfoSaveRequestDTO> gameInfoRequestDTO = gameInfoV2Service.loadMatchData(requestDTO.getPuuid(), start, count);
-        for(GameInfoSaveRequestDTO data : gameInfoRequestDTO){
+        for (GameInfoSaveRequestDTO data : gameInfoRequestDTO) {
             GameInfoV2 entity = data.toEntity();
             summonerV2.addGameInfo(entity);
             List<GameUserSaveRequestDTO> gameUserRequestDTO = gameUserV2Service.loadGameUserData(data.getMatchId());
 
-            for(GameUserSaveRequestDTO dto : gameUserRequestDTO){
+            for (GameUserSaveRequestDTO dto : gameUserRequestDTO) {
                 entity.addGameUser(dto.toEntity());
             }
         }
 
         long t = System.currentTimeMillis() - time;
-        log.info(String.valueOf(t)+"초 걸림");
+        log.info(String.valueOf(t) + "초 걸림");
         return summonerV2Service.save(summonerV2);
     }
 
