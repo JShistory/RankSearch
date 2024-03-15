@@ -29,6 +29,7 @@ public class ParticipantService {
     }
 
     @Transactional
+    @Async
     public List<Participant> saveAllV1(List<Participant> participant, GameInfo gameInfo){
         List<Participant> newData = new ArrayList<>();
         for(Participant data : participant){
@@ -38,27 +39,4 @@ public class ParticipantService {
         List<Participant> participantList = participantRepository.saveAll(newData);
         return participantList;
     }
-
-//    @Transactional
-//    @Async
-//    public List<Participant> saveAllV2(List<Participant> participant, GameInfo gameInfo){
-//        List<Participant> newData = new ArrayList<>();
-//        for(Participant data : participant){
-//            data.setGameInfo(gameInfo);
-//            newData.add(data);
-//        }
-//        List<Participant> participantList = participantRepository.saveAll(newData);
-//        return participantList;
-//    }
-//    @Transactional
-//    @Async
-//    public List<Participant> saveAllV3(List<Participant> participant, GameInfo gameInfo){
-//        List<Participant> newData = new ArrayList<>();
-//        for(Participant data : participant){
-//            data.setGameInfo(gameInfo);
-//            newData.add(data);
-//        }
-//        List<Participant> participantList = participantRepository.saveAll(newData);
-//        return participantList;
-//    }
 }

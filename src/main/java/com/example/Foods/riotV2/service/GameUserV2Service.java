@@ -1,5 +1,6 @@
 package com.example.Foods.riotV2.service;
 
+import com.example.Foods.riotApi.entity.GameInfo;
 import com.example.Foods.riotApi.entity.Participant;
 import com.example.Foods.riotApi.entity.SpellType;
 import com.example.Foods.riotV2.dto.GameInfoSaveRequestDTO;
@@ -7,6 +8,7 @@ import com.example.Foods.riotV2.dto.GameUserSaveRequestDTO;
 import com.example.Foods.riotV2.repository.GameUserV2Repository;
 import com.example.Foods.riotV2.utils.HttpConnect;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -163,5 +165,16 @@ public class GameUserV2Service {
         }
         return saveRequestDTO;
     }
+
+//    @Transactional
+//    public List<GameUserSaveRequestDTO> saveAllV1(List<GameUserSaveRequestDTO> requestDTO, GameInfo gameInfo){
+//        List<Participant> newData = new ArrayList<>();
+//        for(Participant data : participant){
+//            data.setGameInfo(gameInfo);
+//            newData.add(data);
+//        }
+//        List<Participant> participantList = participantRepository.saveAll(newData);
+//        return participantList;
+//    }
 
 }

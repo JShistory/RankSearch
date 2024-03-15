@@ -218,13 +218,15 @@ public class RiotApiController {
             //참가자 정보에 대한 코드
             List<Participant> participantList = riotApiService.loadParticipantsGameInfo(game);
             List<Participant> savedParticipants1 = participantService.saveAllV1(
-                    participantList.subList(0, participantList.size()), gameInfo);
-//            List<Participant> savedParticipants2 = participantService.saveAllV2(participantList.subList(7,15), gameInfo);
-//            List<Participant> savedParticipants3 = participantService.saveAllV3(participantList.subList(15,participantList.size()), gameInfo);
+                    participantList.subList(0, 7), gameInfo);
+            List<Participant> savedParticipants2 = participantService.saveAllV1(
+                    participantList.subList(7, 15), gameInfo);
+            List<Participant> savedParticipants3 = participantService.saveAllV1(
+                    participantList.subList(15, 20), gameInfo);
 
             gameInfoService.saveAll(savedParticipants1, gameInfo);
-//            gameInfoService.saveAll(savedParticipants2, gameInfo);
-//            gameInfoService.saveAll(savedParticipants3, gameInfo);
+            gameInfoService.saveAll(savedParticipants2, gameInfo);
+            gameInfoService.saveAll(savedParticipants3, gameInfo);
             summoner.putGameData(matchData);
         }
 

@@ -25,7 +25,7 @@ public class GameUserV2 {
     @Embedded
     private StatRune statRune;
     @Embedded
-    SubRune subRune;
+    private SubRune subRune;
     @Enumerated(EnumType.STRING)
     private SpellType dSpell;
     @Enumerated(EnumType.STRING)

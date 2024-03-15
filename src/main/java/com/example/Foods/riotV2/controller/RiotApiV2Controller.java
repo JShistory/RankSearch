@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,24 +34,23 @@ public class RiotApiV2Controller {
         SummonerSaveRequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
         SummonerV2 summonerV2 = requestDTO.toEntity();
 
+        //랭크 연관 관계 설정
         HashMap<String, LeagueEntrySaveRequestDTO> LeagueEntryrequestDTOHashMap = leagueEntryV2Service.loadLeagueEntry(requestDTO.getEncryptedId());
         for (LeagueEntrySaveRequestDTO data : LeagueEntryrequestDTOHashMap.values()) {
             summonerV2.addLeagueEntry(data.toEntity());
         }
+
+        //게임 정보(20게임) 연관 관계 설정), 게임 참가자 연관관계 설정
         List<GameInfoSaveRequestDTO> gameInfoRequestDTO = gameInfoV2Service.loadMatchData(requestDTO.getPuuid(), start, count);
         for(GameInfoSaveRequestDTO data : gameInfoRequestDTO){
-            summonerV2.addGameInfo(data.toEntity());
-        }
-
-        for(GameInfoSaveRequestDTO data : gameInfoRequestDTO){
-            List<GameUserSaveRequestDTO> gameUserRequestDTO = gameUserV2Service.loadGameUserData(data.getMatchId());
             GameInfoV2 entity = data.toEntity();
+            summonerV2.addGameInfo(entity);
+            List<GameUserSaveRequestDTO> gameUserRequestDTO = gameUserV2Service.loadGameUserData(data.getMatchId());
+
             for(GameUserSaveRequestDTO dto : gameUserRequestDTO){
                 entity.addGameUser(dto.toEntity());
             }
-            gameInfoV2Service.save(entity);
         }
-
 
         long t = System.currentTimeMillis() - time;
         log.info(String.valueOf(t)+"초 걸림");
@@ -60,7 +60,8 @@ public class RiotApiV2Controller {
     @GetMapping("/summoner/{id}")
     public SummonerResponseDTO findById(@PathVariable Long id) {
         log.info(String.valueOf(id));
-        return summonerV2Service.findById(id);
+        SummonerResponseDTO responseDTO = summonerV2Service.findById(id);
+        return responseDTO;
     }
 
     @DeleteMapping("/summoner/{id}")
