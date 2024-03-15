@@ -46,8 +46,8 @@ public class RiotApiV2Controller {
         for (GameInfoSaveRequestDTO data : gameInfoRequestDTO) {
             GameInfoV2 entity = data.toEntity();
             summonerV2.addGameInfo(entity);
+            //각 게임당 참가자들의 정보
             List<GameUserSaveRequestDTO> gameUserRequestDTO = gameUserV2Service.loadGameUserData(data.getMatchId());
-
             for (GameUserSaveRequestDTO dto : gameUserRequestDTO) {
                 entity.addGameUser(dto.toEntity());
             }
