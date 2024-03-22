@@ -13,7 +13,9 @@ public class GameUserSaveRequestDTO {
     private int assists;
     private int deaths;
     private int kills;
-
+    private String gameMode;
+    private String gameName;
+    private String gameType;
     private String championName;
     private int champLevel;
     private int championId;
@@ -58,10 +60,13 @@ public class GameUserSaveRequestDTO {
 
 
     @Builder
-    public GameUserSaveRequestDTO(int assists, int deaths, int kills, String championName, int champLevel, int championId, int teamId, SpellType dSpell, SpellType fSpell, int item0, int item1, int item2, int item3, int item4, int item5, int item6, String summonerName, int goldEarned, int goldSpent, int wardsKilled, int wardsPlaced, boolean win, int totalMinionsKilled, int visionScore, int statRuneId1, int statRuneId2, int statRuneId3, int mainRuneId, int mainRuneId1, int mainRuneId2, int mainRuneId3, int mainRuneId4, int subRuneId, int subRuneId1, int subRuneId2) {
+    public GameUserSaveRequestDTO(int assists, int deaths, int kills, String championName, String gameMode,String gameType, String gameName, int champLevel, int championId, int teamId, SpellType dSpell, SpellType fSpell, int item0, int item1, int item2, int item3, int item4, int item5, int item6, String summonerName, int goldEarned, int goldSpent, int wardsKilled, int wardsPlaced, boolean win, int totalMinionsKilled, int visionScore, int statRuneId1, int statRuneId2, int statRuneId3, int mainRuneId, int mainRuneId1, int mainRuneId2, int mainRuneId3, int mainRuneId4, int subRuneId, int subRuneId1, int subRuneId2) {
         this.assists = assists;
         this.deaths = deaths;
         this.kills = kills;
+        this.gameMode = gameMode;
+        this.gameType = gameType;
+        this.gameName = gameName;
         this.championName = championName;
         this.champLevel = champLevel;
         this.championId = championId;
@@ -100,6 +105,9 @@ public class GameUserSaveRequestDTO {
         return GameUserV2.builder()
                 .dSpell(dSpell)
                 .fSpell(fSpell)
+                .gameMode(gameMode)
+                .gameName(gameName)
+                .gameType(gameType)
                 .summonerName(summonerName)
                 .mainRune(new MainRune(mainRuneId, mainRuneId1, mainRuneId2, mainRuneId3, mainRuneId4))
                 .kda(new KDA(assists, deaths, kills))

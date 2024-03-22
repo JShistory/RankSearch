@@ -23,7 +23,7 @@ public class HttpConnect {
             }
         } catch (IOException e) {
 
-            throw new IllegalStateException();
+            throw new IllegalStateException("해당하는 소환사가 없거나 오류가 발생했습니다.");
         }
         return result;
     }

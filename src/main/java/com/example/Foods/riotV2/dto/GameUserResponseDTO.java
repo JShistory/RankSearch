@@ -13,6 +13,9 @@ public class GameUserResponseDTO {
     private int assists;
     private int deaths;
     private int kills;
+    private String gameMode;
+    private String gameName;
+    private String gameType;
 
     private String championName;
     private int champLevel;
@@ -61,6 +64,9 @@ public class GameUserResponseDTO {
     public GameUserResponseDTO(GameUserV2 gameUserV2){
         checkKDA(gameUserV2.getKda());
         checkChampion(gameUserV2.getChampion());
+        this.gameMode = gameUserV2.getGameMode();
+        this.gameName = gameUserV2.getGameName();
+        this.gameType = gameUserV2.getGameType();
         this.teamId = gameUserV2.getTeamId();
         this.dSpell = gameUserV2.getDSpell();
         this.fSpell = gameUserV2.getFSpell();
@@ -75,6 +81,9 @@ public class GameUserResponseDTO {
 
     public GameUserV2 toEntity() {
         return GameUserV2.builder()
+                .gameMode(gameMode)
+                .gameType(gameType)
+                .gameName(gameName)
                 .dSpell(dSpell)
                 .fSpell(fSpell)
                 .summonerName(summonerName)

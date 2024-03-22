@@ -50,6 +50,9 @@ public class GameUserV2Service {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
             JSONObject info = (JSONObject) jsonObject.get("info");
             JSONArray jsonArray = (JSONArray) info.get("participants");
+            String gameMode = info.get("gameMode").toString();
+            String gameName = info.get("gameName").toString();
+            String gameType = info.get("gameType").toString();
 
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject participantsData = (JSONObject) jsonArray.get(i);
@@ -128,6 +131,9 @@ public class GameUserV2Service {
                         .item4(item4)
                         .item5(item5)
                         .item6(item6)
+                        .gameMode(gameMode)
+                        .gameName(gameName)
+                        .gameType(gameType)
                         .assists(assists)
                         .kills(kills)
                         .deaths(deaths)

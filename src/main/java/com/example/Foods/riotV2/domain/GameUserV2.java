@@ -14,6 +14,8 @@ public class GameUserV2 {
     private Long id;
     private int teamId;
     private String gameMode;
+    private String gameName;
+    private String gameType;
     @Embedded
     private KDA kda;
     @Embedded
@@ -47,9 +49,11 @@ public class GameUserV2 {
     }
 
     @Builder
-    public GameUserV2(int teamId, String gameMode, KDA kda, Champion champion, Gold gold, Item item, MainRune mainRune, StatRune statRune, SubRune subRune, SpellType dSpell, SpellType fSpell, String summonerName, boolean win, GameInfoV2 gameInfoV2) {
+    public GameUserV2(int teamId, String gameMode, String gameName, String gameType, KDA kda, Champion champion, Gold gold, Item item, MainRune mainRune, StatRune statRune, SubRune subRune, SpellType dSpell, SpellType fSpell, String summonerName, boolean win, GameInfoV2 gameInfoV2) {
         this.teamId = teamId;
         this.gameMode = gameMode;
+        this.gameName = gameName;
+        this.gameType = gameType;
         this.kda = kda;
         this.champion = champion;
         this.gold = gold;
