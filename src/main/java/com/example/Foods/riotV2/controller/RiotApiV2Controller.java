@@ -30,32 +30,32 @@ public class RiotApiV2Controller {
 
     @PostMapping("/summoner")
     public Long summoner(@RequestParam String name, @RequestParam String tag) {
-        long time = System.currentTimeMillis();
-        SummonerSaveRequestDTO requestDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
-        SummonerV2 summonerV2 = requestDTO.toEntity();
+        long startTime = System.currentTimeMillis();
+        SummonerSaveRequestDTO summonerDTO = summonerV2Service.loadUserWithNameAndTag(name, tag);
+        SummonerV2 summoner = summonerDTO.toEntity();
 
         //랭크 연관 관계 설정
-        HashMap<String, LeagueEntrySaveRequestDTO> LeagueEntryrequestDTOHashMap = leagueEntryV2Service.loadLeagueEntry(requestDTO.getEncryptedId());
-        for (LeagueEntrySaveRequestDTO data : LeagueEntryrequestDTOHashMap.values()) {
-            summonerV2.addLeagueEntry(data.toEntity());
+        HashMap<String, LeagueEntrySaveRequestDTO> leagueEntryDTOHashMap = leagueEntryV2Service.loadLeagueEntry(summonerDTO.getEncryptedId());
+        for (LeagueEntrySaveRequestDTO leagueEntryDTO : leagueEntryDTOHashMap.values()) {
+            summoner.addLeagueEntry(leagueEntryDTO.toEntity());
         }
-
         //게임 정보(20게임) 연관 관계 설정), 게임 참가자 연관관계 설정
         //20게임에 대한 matchId를 가져옴
-        List<GameInfoSaveRequestDTO> gameInfoRequestDTO = gameInfoV2Service.loadMatchData(requestDTO.getPuuid(), start, count);
-        for (GameInfoSaveRequestDTO data : gameInfoRequestDTO) {
-            GameInfoV2 entity = data.toEntity();
-            summonerV2.addGameInfo(entity);
+        List<GameInfoSaveRequestDTO> gameInfoDTOList = gameInfoV2Service.loadMatchData(summonerDTO.getPuuid(), start, count);
+        for (GameInfoSaveRequestDTO gameInfoDTO : gameInfoDTOList) {
+            GameInfoV2 gameInfoEntity = gameInfoDTO.toEntity();
+            summoner.addGameInfo(gameInfoEntity);
             //각 게임당 참가자들의 정보
-            List<GameUserSaveRequestDTO> gameUserRequestDTO = gameUserV2Service.loadGameUserData(data.getMatchId());
-            for (GameUserSaveRequestDTO dto : gameUserRequestDTO) {
-                entity.addGameUser(dto.toEntity());
+            List<GameUserSaveRequestDTO> gameUserDTOList = gameUserV2Service.loadGameUserData(gameInfoDTO.getMatchId());
+            for (GameUserSaveRequestDTO gameUserDTO : gameUserDTOList) {
+                gameInfoEntity.addGameUser(gameUserDTO.toEntity());
             }
         }
 
-        long t = System.currentTimeMillis() - time;
-        log.info(t + "초 걸림");
-        return summonerV2Service.save(summonerV2);
+        long executionTime = System.currentTimeMillis() - startTime;
+        log.info("Execution time: {} milliseconds", executionTime);
+
+        return summonerV2Service.save(summoner);
     }
 
     @GetMapping("/summoner/{id}")
