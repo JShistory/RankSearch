@@ -2,7 +2,9 @@ package com.example.Foods.riotV2.domain.embedded;
 
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Embeddable
 public class Champion {
     private String championName;

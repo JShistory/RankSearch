@@ -4,7 +4,9 @@ import com.example.Foods.riotApi.entity.SpellType;
 import com.example.Foods.riotV2.domain.embedded.*;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class GameUserV2 {
     @Id
@@ -35,6 +37,10 @@ public class GameUserV2 {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GAMEINFOV2_ID")
     private GameInfoV2 gameInfoV2;
+
+    public GameUserV2() {
+
+    }
 
     public void setGameInfo(GameInfoV2 gameInfo) {
         this.gameInfoV2 = gameInfo;

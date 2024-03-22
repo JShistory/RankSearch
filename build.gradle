@@ -31,13 +31,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
-//	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-devtools' // 추가
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
 	testImplementation 'org.junit.platform:junit-platform-launcher:1.9.0'
 	testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.0'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.33'
+//	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.33'
 
 
 

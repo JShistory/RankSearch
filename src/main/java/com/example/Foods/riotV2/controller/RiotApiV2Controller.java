@@ -54,7 +54,7 @@ public class RiotApiV2Controller {
         }
 
         long t = System.currentTimeMillis() - time;
-        log.info(String.valueOf(t) + "초 걸림");
+        log.info(t + "초 걸림");
         return summonerV2Service.save(summonerV2);
     }
 
