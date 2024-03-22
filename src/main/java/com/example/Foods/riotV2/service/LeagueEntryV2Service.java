@@ -20,6 +20,8 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @Service
 public class LeagueEntryV2Service {
+    private final static String soloRank = "솔로랭크";
+    private final static String flexRank = "자유랭크";
     private final LeagueEntryV2Repository leagueEntryV2Repository;
     private final HttpConnect httpConnect;
 
@@ -67,7 +69,7 @@ public class LeagueEntryV2Service {
                 jsonIndex++;
                 leagueId = (String) jsonObject.get("leagueId");
                 summonerId = (String) jsonObject.get("summonerId");
-                queueType = "솔로랭크";
+                queueType = soloRank;
                 tier = (String) jsonObject.get("tier");
                 rank = (String) jsonObject.get("rank");
                 leaguePoints = Integer.valueOf(jsonObject.get("leaguePoints").toString());
@@ -88,7 +90,7 @@ public class LeagueEntryV2Service {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(jsonIndex);
                 leagueId = (String) jsonObject.get("leagueId");
                 summonerId = (String) jsonObject.get("summonerId");
-                queueType = "자유랭크";
+                queueType = flexRank;
                 tier = (String) jsonObject.get("tier");
                 rank = (String) jsonObject.get("rank");
                 leaguePoints = Integer.valueOf(jsonObject.get("leaguePoints").toString());
@@ -109,10 +111,10 @@ public class LeagueEntryV2Service {
             throw new RuntimeException(e);
         }
         if (flexLeagueEntity != null) {
-            leagueEntryMap.put("자유랭크", flexLeagueEntity);
+            leagueEntryMap.put(soloRank, flexLeagueEntity);
         }
         if (soloLeagueEntity != null) {
-            leagueEntryMap.put("솔로랭크", soloLeagueEntity);
+            leagueEntryMap.put(flexRank, soloLeagueEntity);
         }
 
         return leagueEntryMap;
