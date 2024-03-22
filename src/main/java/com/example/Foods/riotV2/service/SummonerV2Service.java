@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class SummonerV2Service {
@@ -29,10 +31,13 @@ public class SummonerV2Service {
 
     @Transactional
     public Long save(SummonerSaveRequestDTO requestDTO){
-        return summonerV2Repository.save(requestDTO.toEntity()).getId();
+        SummonerV2 summonerV2 = requestDTO.toEntity();
+        validate(summonerV2);
+        return summonerV2Repository.save(summonerV2).getId();
     }
     @Transactional
     public Long save(SummonerV2 summonerV2){
+        validate(summonerV2);
         return summonerV2Repository.save(summonerV2).getId();
     }
 
@@ -48,6 +53,13 @@ public class SummonerV2Service {
                 .orElseThrow(() -> new IllegalArgumentException("해당 소환사는 없습니다."));
         summonerV2Repository.delete(summoner);
         return id;
+    }
+
+    private void validate(SummonerV2 summonerV2){
+        List<SummonerV2> summoners = summonerV2Repository.findByFindNameAndTag(summonerV2.getFindName(), summonerV2.getTag());
+        if(!summoners.isEmpty()){
+           throw new IllegalStateException("이미 존재하는 소환사 입니다.");
+        }
     }
 
     /**
