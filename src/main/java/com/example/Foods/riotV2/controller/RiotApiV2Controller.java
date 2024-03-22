@@ -79,8 +79,10 @@ public class RiotApiV2Controller {
     }
 
     @DeleteMapping("/summoner/{id}")
-    public Long delete(@PathVariable Long id) {
-        return summonerV2Service.delete(id);
+    public ResponseEntity<BasicResponse> delete(@PathVariable Long id) {
+        summonerV2Service.delete(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new BasicResponse(204, HttpStatus.NO_CONTENT, "Summoner deleted successfully", Collections.singletonList(id)));
     }
 
 }
