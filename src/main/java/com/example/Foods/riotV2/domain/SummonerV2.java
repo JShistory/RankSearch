@@ -24,26 +24,27 @@ public class SummonerV2 {
     private String findName;
     private Long summonerLevel;
 
-    @OneToMany(mappedBy = "summonerV2",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "summonerV2", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LeagueEntryV2> league = new ArrayList<>();
 
-    @OneToMany(mappedBy = "summonerV2",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "summonerV2", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GameInfoV2> gameInfo = new ArrayList<>();
 
-    public void addLeagueEntry(LeagueEntryV2 LeagueEntry){
+    public void addLeagueEntry(LeagueEntryV2 LeagueEntry) {
         this.league.add(LeagueEntry);
         LeagueEntry.setSummonerV2(this);
     }
 
-    public void addGameInfo(GameInfoV2 gameInfoV2){
+    public void addGameInfo(GameInfoV2 gameInfoV2) {
         this.gameInfo.add(gameInfoV2);
         gameInfoV2.setSummonerV2(this);
     }
 
     @Builder
-    public SummonerV2(String accountId, int profileIconId, Long revisionDate, String name,
-                      String puuid, String tag, String findName, Long summonerLevel, String encryptedId){
-        this.accountId =accountId;
+    public SummonerV2(Long id, String accountId, int profileIconId, Long revisionDate, String name,
+                      String puuid, String tag, String findName, Long summonerLevel, String encryptedId) {
+        this.id = id;
+        this.accountId = accountId;
         this.encryptedId = encryptedId;
         this.profileIconId = profileIconId;
         this.revisionDate = revisionDate;
@@ -53,7 +54,8 @@ public class SummonerV2 {
         this.findName = findName;
         this.summonerLevel = summonerLevel;
     }
-    public SummonerV2(){
+
+    public SummonerV2() {
 
     }
 }

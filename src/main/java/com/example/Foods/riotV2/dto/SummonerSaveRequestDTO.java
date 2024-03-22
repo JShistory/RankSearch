@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SummonerSaveRequestDTO{
+public class SummonerSaveRequestDTO {
+    private Long id;
     private String accountId;
     private String encryptedId;
     private int profileIconId;
@@ -17,7 +18,8 @@ public class SummonerSaveRequestDTO{
     private Long summonerLevel;
 
     @Builder
-    public SummonerSaveRequestDTO(String name, String puuid, String encryptedId, String tag, String findName, String accountId, int profileIconId, Long revisionDate, Long summonerLevel) {
+    public SummonerSaveRequestDTO(Long id, String name, String puuid, String encryptedId, String tag, String findName, String accountId, int profileIconId, Long revisionDate, Long summonerLevel) {
+        this.id = id;
         this.name = name;
         this.puuid = puuid;
         this.tag = tag;
@@ -32,6 +34,7 @@ public class SummonerSaveRequestDTO{
 
     public SummonerV2 toEntity() {
         return SummonerV2.builder()
+                .id(id)
                 .accountId(accountId)
                 .profileIconId(profileIconId)
                 .revisionDate(revisionDate)

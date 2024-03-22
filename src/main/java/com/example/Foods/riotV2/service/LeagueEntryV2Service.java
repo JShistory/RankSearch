@@ -1,6 +1,7 @@
 package com.example.Foods.riotV2.service;
 
 import com.example.Foods.riotV2.domain.LeagueEntryV2;
+import com.example.Foods.riotV2.domain.SummonerV2;
 import com.example.Foods.riotV2.dto.LeagueEntryResponseDTO;
 import com.example.Foods.riotV2.dto.LeagueEntrySaveRequestDTO;
 import com.example.Foods.riotV2.repository.LeagueEntryV2Repository;
@@ -117,5 +118,9 @@ public class LeagueEntryV2Service {
         return leagueEntryMap;
     }
 
-
+    public void setLeagueEntrySummoner(HashMap<String, LeagueEntrySaveRequestDTO> requestDTO, SummonerV2 summoner){
+        for (LeagueEntrySaveRequestDTO leagueEntryDTO : requestDTO.values()) {
+            summoner.addLeagueEntry(leagueEntryDTO.toEntity());
+        }
+    }
 }

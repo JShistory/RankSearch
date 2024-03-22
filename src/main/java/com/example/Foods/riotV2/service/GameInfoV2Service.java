@@ -2,7 +2,9 @@ package com.example.Foods.riotV2.service;
 
 
 import com.example.Foods.riotV2.domain.GameInfoV2;
+import com.example.Foods.riotV2.domain.SummonerV2;
 import com.example.Foods.riotV2.dto.GameInfoSaveRequestDTO;
+import com.example.Foods.riotV2.dto.GameUserSaveRequestDTO;
 import com.example.Foods.riotV2.repository.GameInfoV2Repository;
 import com.example.Foods.riotV2.utils.HttpConnect;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,7 @@ public class GameInfoV2Service {
     private String matchUrl;
 
     private final GameInfoV2Repository gameInfoV2Repository;
-    private final HttpConnect httpConnect;
+    private final GameUserV2Service gameUserV2Service;
 
     public Long save(GameInfoSaveRequestDTO requestDTO){
         return gameInfoV2Repository.save(requestDTO.toEntity()).getId();
@@ -58,5 +60,17 @@ public class GameInfoV2Service {
         }
 
         return requestDTO;
+    }
+
+    public void setGameSummoner(List<GameInfoSaveRequestDTO> requestDTO, SummonerV2 summoner){
+        for (GameInfoSaveRequestDTO gameInfoDTO : requestDTO) {
+            GameInfoV2 gameInfoEntity = gameInfoDTO.toEntity();
+            summoner.addGameInfo(gameInfoEntity);
+            //각 게임당 참가자들의 정보
+            List<GameUserSaveRequestDTO> gameUserDTOList = gameUserV2Service.loadGameUserData(gameInfoDTO.getMatchId());
+            for (GameUserSaveRequestDTO gameUserDTO : gameUserDTOList) {
+                gameInfoEntity.addGameUser(gameUserDTO.toEntity());
+            }
+        }
     }
 }

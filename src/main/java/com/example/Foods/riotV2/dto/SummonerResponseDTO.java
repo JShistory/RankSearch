@@ -18,48 +18,61 @@ public class SummonerResponseDTO {
     private String tag;
     private String findName;
     private Long summonerLevel;
+    private String accountId;
+    private String encryptedId;
+    private Long revisionDate;
+    private String puuid;
     private LeagueEntryResponseDTO soloEntry;
     private LeagueEntryResponseDTO flexEntry;
     private List<GameUserResponseDTO> gameUser = new ArrayList<>();
 
+
     @Builder
-    public SummonerResponseDTO(SummonerV2 entity){
+    public SummonerResponseDTO(SummonerV2 entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.tag = entity.getTag();
         this.findName = entity.getFindName();
         this.profileIconId = entity.getProfileIconId();
         this.summonerLevel = entity.getSummonerLevel();
+        this.accountId = entity.getAccountId();
+        this.encryptedId = entity.getEncryptedId();
+        this.revisionDate = entity.getRevisionDate();
+        this.puuid = entity.getPuuid();
         checkLeague(entity.getLeague());
         checkGameInfo(entity.getGameInfo());
     }
 
-    private void checkGameInfo(List<GameInfoV2> games){
-        for(GameInfoV2 data : games){
-            for(GameUserV2 user : data.getGameUserV2List()){
+    private void checkGameInfo(List<GameInfoV2> games) {
+        for (GameInfoV2 data : games) {
+            for (GameUserV2 user : data.getGameUserV2List()) {
                 this.gameUser.add(new GameUserResponseDTO(user));
             }
         }
     }
-    private void checkLeague(List<LeagueEntryV2> leagueEntry){
-        for(LeagueEntryV2 data : leagueEntry){
-            if(data.getQueueType().equals("솔로랭크")){
+
+    private void checkLeague(List<LeagueEntryV2> leagueEntry) {
+        for (LeagueEntryV2 data : leagueEntry) {
+            if (data.getQueueType().equals("솔로랭크")) {
                 this.soloEntry = new LeagueEntryResponseDTO(data);
-            }
-            else if(data.getQueueType().equals("자유랭크")){
+            } else if (data.getQueueType().equals("자유랭크")) {
                 this.flexEntry = new LeagueEntryResponseDTO(data);
             }
         }
     }
 
-    public SummonerV2 toEntity(){
+    public SummonerV2 toEntity() {
         return SummonerV2.builder()
+                .id(id)
                 .profileIconId(profileIconId)
                 .name(name)
                 .tag(tag)
                 .findName(findName)
                 .summonerLevel(summonerLevel)
-
+                .accountId(accountId)
+                .encryptedId(encryptedId)
+                .puuid(puuid)
+                .revisionDate(revisionDate)
                 .build();
     }
 }
