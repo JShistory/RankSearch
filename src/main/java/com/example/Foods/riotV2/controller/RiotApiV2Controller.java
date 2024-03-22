@@ -51,11 +51,11 @@ public class RiotApiV2Controller {
         log.info("Execution time: {} milliseconds", executionTime);
         summonerV2Service.save(summoner);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BasicResponse(201,HttpStatus.CREATED,"Summoner Created successfully", Collections.singletonList(summonerDTO.getId())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BasicResponse(201, HttpStatus.CREATED, "Summoner Created successfully", Collections.singletonList(summonerDTO.getId())));
     }
 
     @GetMapping("/summoner/load/{id}")
-    public ResponseEntity<BasicResponse> updateSummoner(@PathVariable Long id){
+    public ResponseEntity<BasicResponse> updateSummoner(@PathVariable Long id) {
         SummonerResponseDTO responseDTO = summonerV2Service.findById(id);
         SummonerV2 summoner = responseDTO.toEntity();
 
@@ -67,7 +67,7 @@ public class RiotApiV2Controller {
         List<GameInfoSaveRequestDTO> gameInfoDTOList = gameInfoV2Service.loadMatchData(summoner.getPuuid(), start, count);
         gameInfoV2Service.setGameSummoner(gameInfoDTOList, summoner);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new BasicResponse(204,HttpStatus.NO_CONTENT,"Summoner updated successfully",null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new BasicResponse(204, HttpStatus.NO_CONTENT, "Summoner updated successfully", null));
     }
 
     @GetMapping("/summoner/{id}")
@@ -75,7 +75,7 @@ public class RiotApiV2Controller {
         log.info(String.valueOf(id));
         SummonerResponseDTO responseDTO = summonerV2Service.findById(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new BasicResponse(200,HttpStatus.OK,"Summoner find successfully", Collections.singletonList(responseDTO)));
+        return ResponseEntity.status(HttpStatus.OK).body(new BasicResponse(200, HttpStatus.OK, "Summoner find successfully", Collections.singletonList(responseDTO)));
     }
 
     @DeleteMapping("/summoner/{id}")
